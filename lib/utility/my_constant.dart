@@ -32,4 +32,10 @@ class MyConstant {
 
   TextStyle h3Style() =>
       TextStyle(fontSize: 14, color: dark, fontWeight: FontWeight.normal);
+
+  //Button Style
+  ButtonStyle myButtonStyle() => ElevatedButton.styleFrom(
+        primary: MyConstant.primary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      );
 }
