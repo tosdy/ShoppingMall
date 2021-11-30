@@ -8,9 +8,9 @@ class MyConstant {
   //Rount
   static String rountAuthen = '/authen';
   static String rountCreateAccount = '/createAccount';
-  static String rountBuyerService = 'buyerService';
-  static String rountSalerService = 'saleService';
-  static String rountRiderService = 'riderService';
+  static String rountBuyerService = '/buyerService';
+  static String rountSalerService = '/saleService';
+  static String rountRiderService = '/riderService';
 
   //image
   static String image1 = 'images/image1.png';
