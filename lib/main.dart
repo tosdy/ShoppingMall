@@ -5,6 +5,7 @@ import 'package:shoppingmall/states/create_account.dart';
 import 'package:shoppingmall/states/rider_service.dart';
 import 'package:shoppingmall/states/saler_service.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:flutter/services.dart';
 
 final Map<String, WidgetBuilder> map = {
   '/authen': (BuildContext context) => Authen(),
@@ -26,10 +27,32 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _portraitModeOnly();
     return MaterialApp(
       title: MyConstant.appName,
       routes: map,
       initialRoute: initialRount,
     );
+  }
+
+  @override
+  void dispose() {
+    _enableRotation();
+  }
+
+  void _portraitModeOnly() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  void _enableRotation() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 }
