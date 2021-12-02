@@ -20,7 +20,7 @@ class CreateAccount extends StatefulWidget {
 class _CreateAccountState extends State<CreateAccount> {
   String? typeUser;
   File? file;
-
+  double? lat, lng;
   @override
   void initState() {
     super.initState();
@@ -43,6 +43,7 @@ class _CreateAccountState extends State<CreateAccount> {
               context, 'ไม่อนุญาต แชร์ Location', 'โปรดแชร์ Location');
         } else {
           print("Find Lat Lng");
+          findLanLng();
         }
       } else {
         if (locationPermission == LocationPermission.deniedForever) {
@@ -56,6 +57,25 @@ class _CreateAccountState extends State<CreateAccount> {
       print('Service Location Close');
       MyDialog().alertLocationService(context, 'Location sevice ของคุณปิดอยู่',
           'กรุณาเปิด Location Service ด้วยคะ');
+    }
+  }
+
+  Future<Null> findLanLng() async {
+    Position? position = await findPosition();
+    setState(() {
+      lat = position!.latitude;
+      lng = position.longitude;
+      print('lat = $lat , lng = $lng');
+    });
+  }
+
+  Future<Position?> findPosition() async {
+    Position position;
+    try {
+      position = await Geolocator.getCurrentPosition();
+      return position;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -241,6 +261,8 @@ class _CreateAccountState extends State<CreateAccount> {
             buildTitle('รูปภาพ'),
             buildSubTitle(),
             buildAvatar(size),
+            buildTitle('แสดงพิกัดที่คุณอยู๋'),
+            Text('Lat =$lat, Lng = $lng'),
           ],
         ),
       ),
