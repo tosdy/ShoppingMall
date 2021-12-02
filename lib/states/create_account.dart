@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_void_to_null, avoid_print
+// ignore_for_file: prefer_const_constructors, prefer_void_to_null, avoid_print, non_constant_identifier_names
 
 import 'dart:io';
 
@@ -25,18 +25,37 @@ class _CreateAccountState extends State<CreateAccount> {
   void initState() {
     super.initState();
     print('Init State..');
-    findLatLng();
+    CheckPermisstion();
   }
 
-  Future<Null> findLatLng() async {
+  Future<Null> CheckPermisstion() async {
     bool locationService;
     LocationPermission locationPermission;
     locationService = await Geolocator.isLocationServiceEnabled();
     if (locationService) {
       print('Service Location Open');
+      locationPermission = await Geolocator.checkPermission();
+
+      if (locationPermission == LocationPermission.denied) {
+        locationPermission = await Geolocator.requestPermission();
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(
+              context, 'ไม่อนุญาต แชร์ Location', 'โปรดแชร์ Location');
+        } else {
+          print("Find Lat Lng");
+        }
+      } else {
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(
+              context, 'ไม่อนุญาต แชร์ Location', 'โปรดแชร์ Location');
+        } else {
+          print("Find Lat Lng");
+        }
+      }
     } else {
       print('Service Location Close');
-      MyDialog().alertLocationService(context);
+      MyDialog().alertLocationService(context, 'Location sevice ของคุณปิดอยู่',
+          'กรุณาเปิด Location Service ด้วยคะ');
     }
   }
 

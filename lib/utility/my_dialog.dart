@@ -7,15 +7,20 @@ import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
 
 class MyDialog {
-  Future<Null> alertLocationService(BuildContext cotext) async {
+  Future<Null> alertLocationService(
+      BuildContext context, String title, String message) async {
     showDialog(
-      context: cotext,
+      context: context,
       builder: (context) => AlertDialog(
         title: ListTile(
           leading: Showimage(path: MyConstant.image4),
           title: ShowTitle(
-            title: 'Location sevice ของคุณปิดอยู่',
+            title: title,
             textStyle: MyConstant().h2Style(),
+          ),
+          subtitle: ShowTitle(
+            title: message,
+            textStyle: MyConstant().h3Style(),
           ),
         ),
         actions: [
