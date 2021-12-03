@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
+import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
 
 class CreateAccount extends StatefulWidget {
@@ -42,7 +43,7 @@ class _CreateAccountState extends State<CreateAccount> {
           MyDialog().alertLocationService(
               context, 'ไม่อนุญาต แชร์ Location', 'โปรดแชร์ Location');
         } else {
-          print("Find Lat Lng");
+          print("Find Lat Lng -1");
           findLanLng();
         }
       } else {
@@ -50,7 +51,8 @@ class _CreateAccountState extends State<CreateAccount> {
           MyDialog().alertLocationService(
               context, 'ไม่อนุญาต แชร์ Location', 'โปรดแชร์ Location');
         } else {
-          print("Find Lat Lng");
+          print("Find Lat Lng -2");
+          findLanLng();
         }
       }
     } else {
@@ -262,12 +264,19 @@ class _CreateAccountState extends State<CreateAccount> {
             buildSubTitle(),
             buildAvatar(size),
             buildTitle('แสดงพิกัดที่คุณอยู๋'),
-            Text('Lat =$lat, Lng = $lng'),
+            buildMap(),
           ],
         ),
       ),
     );
   }
+
+  Widget buildMap() => Container(
+        //color: Colors.grey,
+        width: double.infinity,
+        height: 200,
+        child: lat == null ? ShowProgress() : Text('Lat =$lat, Lng = $lng'),
+      );
 
   Future<Null> chooseImage(ImageSource source) async {
     try {
