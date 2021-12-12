@@ -126,6 +126,7 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+            keyboardType: TextInputType.phone,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอก Phone';
@@ -268,12 +269,7 @@ class _CreateAccountState extends State<CreateAccount> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {}
-            },
-            icon: Icon(Icons.cloud_upload),
-          ),
+          buildCreateMyAccount(),
         ],
         title: Text('Create Account'),
         backgroundColor: MyConstant.primary,
@@ -283,29 +279,47 @@ class _CreateAccountState extends State<CreateAccount> {
         behavior: HitTestBehavior.opaque,
         child: Form(
           key: formKey,
-          child: ListView(
-            padding: EdgeInsets.all(16),
-            children: [
-              buildTitle('ข้อมูลทั่วไป'),
-              buildName(size),
-              buildTitle('ชนิดของ User :'),
-              buildRadioBuyer(size),
-              buildRadioSeller(size),
-              buildRadioRider(size),
-              buildTitle('ข้อมูลพื้นฐาน'),
-              buildAddress(size),
-              buildPhone(size),
-              buildUser(size),
-              buildPassword(size),
-              buildTitle('รูปภาพ'),
-              buildSubTitle(),
-              buildAvatar(size),
-              buildTitle('แสดงพิกัดที่คุณอยู๋'),
-              buildMap(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                buildTitle('ข้อมูลทั่วไป'),
+                buildName(size),
+                buildTitle('ชนิดของ User :'),
+                buildRadioBuyer(size),
+                buildRadioSeller(size),
+                buildRadioRider(size),
+                buildTitle('ข้อมูลพื้นฐาน'),
+                buildAddress(size),
+                buildPhone(size),
+                buildUser(size),
+                buildPassword(size),
+                buildTitle('รูปภาพ'),
+                buildSubTitle(),
+                buildAvatar(size),
+                buildTitle('แสดงพิกัดที่คุณอยู๋'),
+                buildMap(),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  IconButton buildCreateMyAccount() {
+    return IconButton(
+      onPressed: () {
+        if (formKey.currentState!.validate()) {
+          if (typeUser == null) {
+            print('Non Choose Type User');
+            MyDialog().normalDialog(
+                context, 'ยังไม่ได้เลือกชนิด user', 'กรุณาเลือกชนิดของ user');
+          } else {
+            print('Process Insert to Database');
+          }
+        }
+      },
+      icon: Icon(Icons.cloud_upload),
     );
   }
 

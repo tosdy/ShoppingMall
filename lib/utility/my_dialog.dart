@@ -1,6 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
@@ -32,6 +35,24 @@ class MyDialog {
                 exit(0);
               },
               child: Text('OK')),
+        ],
+      ),
+    );
+  }
+
+  Future<Null> normalDialog(
+      BuildContext context, String title, String message) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: ListTile(
+          leading: Showimage(path: MyConstant.image1),
+          title: ShowTitle(title: title, textStyle: MyConstant().h2Style()),
+          subtitle:
+              ShowTitle(title: message, textStyle: MyConstant().h3Style()),
+        ),
+        children: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('OK'))
         ],
       ),
     );
