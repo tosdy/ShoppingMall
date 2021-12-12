@@ -19,11 +19,17 @@ if (isset($_GET)) {
 	if ($_GET['isAdd'] == 'true') {
 				
 		$name = $_GET['name'];
+		$type = $_GET['type'];
+		$address = $_GET['address'];
+		$phone = $_GET['phone'];
 		$user = $_GET['user'];
 		$password = $_GET['password'];
+		$avatar = $_GET['avatar'];
+		$lat = $_GET['lat'];
+		$lng = $_GET['lng'];
 		
 							
-		$sql = "INSERT INTO `user`(`id`, `name`, `user`, `password`) VALUES (Null,'$name','$user','$password')";
+		$sql = "INSERT INTO `user`(`id`, `name`, `type`, `address`,`phone`,`user`, `password`, `avatar`, `lat`, `lng` ) VALUES (Null,'$name','$type','$address','$phone','$user','$password','$avatar','$lat','$lng')";
 
 		$result = mysqli_query($link, $sql);
 
