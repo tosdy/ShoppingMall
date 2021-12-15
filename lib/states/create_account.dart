@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_void_to_null, avoid_print, non_constant_identifier_names
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _CreateAccountState extends State<CreateAccount> {
   File? file;
   double? lat, lng;
   final formKey = GlobalKey<FormState>();
+  String avatar = '';
 
   TextEditingController nameControler = TextEditingController();
   TextEditingController addressControler = TextEditingController();
@@ -329,6 +331,7 @@ class _CreateAccountState extends State<CreateAccount> {
                 context, 'ยังไม่ได้เลือกชนิด user', 'กรุณาเลือกชนิดของ user');
           } else {
             print('Process Insert to Database');
+            uploadPictureAndInsertData();
           }
         }
       },
@@ -347,7 +350,38 @@ class _CreateAccountState extends State<CreateAccount> {
         '##Name = $name , ##address = $address , ##phone = $phone , ##user = $user , ##password = $password');
     String path =
         '${MyConstant.domain}/shoppingmall/getUserWhereUser.php?isAdd=true&user=$user';
-    await Dio().get(path).then((value) => print('## value ==>> $value'));
+    await Dio().get(path).then((value) async {
+      print('## value ==>> $value');
+      if (value.toString() == 'null') {
+        print('## user OK');
+
+        if (file == null) {
+          //No Avatar
+          processInsertMySQL();
+        } else {
+          String apiSaveAvatar =
+              '${MyConstant.domain}/shoppingmall/saveAvatar.php';
+          int i = Random().nextInt(100000);
+          String nameAvatar = 'avatar$i.jpg';
+          Map<String, dynamic> map = Map();
+          map['file'] =
+              await MultipartFile.fromFile(file!.path, filename: nameAvatar);
+
+          FormData data = FormData.fromMap(map);
+
+          await Dio().post(apiSaveAvatar, data: data).then((value) {
+            avatar = '/shoppingmall/avatar/$nameAvatar';
+            processInsertMySQL();
+          });
+        }
+      } else {
+        MyDialog().normalDialog(context, 'User False ?', 'Please Change User');
+      }
+    });
+  }
+
+  Future<Null> processInsertMySQL() async {
+    print('### processInsertMySQL ==> $avatar');
   }
 
   // ignore: prefer_collection_literals
