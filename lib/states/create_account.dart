@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,6 +25,13 @@ class _CreateAccountState extends State<CreateAccount> {
   File? file;
   double? lat, lng;
   final formKey = GlobalKey<FormState>();
+
+  TextEditingController nameControler = TextEditingController();
+  TextEditingController addressControler = TextEditingController();
+  TextEditingController phoneControler = TextEditingController();
+  TextEditingController userControler = TextEditingController();
+  TextEditingController passwordControler = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -91,6 +99,7 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+            controller: nameControler,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอก Name';
@@ -126,6 +135,7 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+            controller: phoneControler,
             keyboardType: TextInputType.phone,
             validator: (value) {
               if (value!.isEmpty) {
@@ -162,6 +172,7 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+            controller: userControler,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอก User';
@@ -197,6 +208,7 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+            controller: passwordControler,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอก Password';
@@ -232,6 +244,7 @@ class _CreateAccountState extends State<CreateAccount> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.6,
           child: TextFormField(
+            controller: addressControler,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอก Address';
@@ -321,6 +334,20 @@ class _CreateAccountState extends State<CreateAccount> {
       },
       icon: Icon(Icons.cloud_upload),
     );
+  }
+
+  Future<Null> uploadPictureAndInsertData() async {
+    String name = nameControler.text;
+    String address = addressControler.text;
+    String phone = phoneControler.text;
+    String user = userControler.text;
+    String password = passwordControler.text;
+
+    print(
+        '##Name = $name , ##address = $address , ##phone = $phone , ##user = $user , ##password = $password');
+    String path =
+        '${MyConstant.domain}/shoppingmall/getUserWhereUser.php?isAdd=true&user=$user';
+    await Dio().get(path).then((value) => print('## value ==>> $value'));
   }
 
   // ignore: prefer_collection_literals

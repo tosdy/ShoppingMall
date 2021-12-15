@@ -19,6 +19,9 @@ class MyConstant {
   static String image4 = 'images/image4.png';
   static String avatar = 'images/avatar.png';
 
+  //Domain
+  static String domain = '';
+
 //Color
   static Color primary = Color(0xff9e9d24);
   static Color dark = Color(0xff6c6f00);
