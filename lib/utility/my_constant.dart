@@ -21,7 +21,7 @@ class MyConstant {
 
   //Domain
   static String domain =
-      'https://240a-2001-fb1-53-4316-7c13-d8d1-67a3-76b2.ngrok.io';
+      'https://86aa-2001-fb1-53-4c0e-4cdf-5b97-a192-15bc.ngrok.io';
 
 //Color
   static Color primary = Color(0xff9e9d24);

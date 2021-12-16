@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class SalerService extends StatefulWidget {
@@ -10,6 +12,10 @@ class SalerService extends StatefulWidget {
 class _SalerServiceState extends State<SalerService> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Saler'),
+      ),
+    );
   }
 }
