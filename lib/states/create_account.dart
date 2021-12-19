@@ -357,7 +357,12 @@ class _CreateAccountState extends State<CreateAccount> {
 
         if (file == null) {
           //No Avatar
-          processInsertMySQL();
+          processInsertMySQL(
+              name: name,
+              address: address,
+              phone: phone,
+              user: user,
+              password: password);
         } else {
           String apiSaveAvatar =
               '${MyConstant.domain}/shoppingmall/saveAvatar.php';

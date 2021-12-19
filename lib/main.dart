@@ -24,14 +24,14 @@ Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   String? type = preferences.getString('type');
-  print('### type ==> $type');
+  print('###(main) type ==> $type');
   if (type?.isEmpty ?? true) {
     initialRount = MyConstant.rountAuthen;
     runApp(MyApp());
   } else {
     switch (type) {
-      case 'user':
-        initialRount = MyConstant.rountAuthen;
+      case 'seller':
+        initialRount = MyConstant.rountSalerService;
         runApp(MyApp());
         break;
       case 'buyer':
