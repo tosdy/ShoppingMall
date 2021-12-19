@@ -1,6 +1,10 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unused_import
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/widgets/show_signout.dart';
+import 'package:shoppingmall/widgets/show_title.dart';
 
 class BuyerService extends StatefulWidget {
   const BuyerService({Key? key}) : super(key: key);
@@ -15,6 +19,9 @@ class _BuyerServiceState extends State<BuyerService> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Buyer'),
+      ),
+      drawer: Drawer(
+        child: ShowSignOut(),
       ),
     );
   }

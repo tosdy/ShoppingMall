@@ -21,7 +21,7 @@ class MyConstant {
 
   //Domain
   static String domain =
-      'https://86aa-2001-fb1-53-4c0e-4cdf-5b97-a192-15bc.ngrok.io';
+      'https://4b55-2001-fb1-50-456d-91ac-46c5-a248-42fd.ngrok.io';
 
 //Color
   static Color primary = Color(0xff9e9d24);
@@ -35,8 +35,14 @@ class MyConstant {
   TextStyle h2Style() =>
       TextStyle(fontSize: 18, color: dark, fontWeight: FontWeight.w700);
 
+  TextStyle h2WhiteStyle() =>
+      TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w700);
+
   TextStyle h3Style() =>
       TextStyle(fontSize: 14, color: dark, fontWeight: FontWeight.normal);
+
+  TextStyle h3WhiteStyle() => TextStyle(
+      fontSize: 14, color: Colors.white, fontWeight: FontWeight.normal);
 
   //Button Style
   ButtonStyle myButtonStyle() => ElevatedButton.styleFrom(

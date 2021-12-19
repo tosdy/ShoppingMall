@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:shoppingmall/widgets/show_signout.dart';
 
 class SalerService extends StatefulWidget {
   const SalerService({Key? key}) : super(key: key);
@@ -15,6 +16,9 @@ class _SalerServiceState extends State<SalerService> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Saler'),
+      ),
+      drawer: Drawer(
+        child: ShowSignOut(),
       ),
     );
   }

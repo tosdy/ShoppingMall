@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_const_constructors, prefer_void_to_null, unused_local_variable
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/states/authen.dart';
 import 'package:shoppingmall/states/buyer_service.dart';
 import 'package:shoppingmall/states/create_account.dart';
@@ -17,9 +20,31 @@ final Map<String, WidgetBuilder> map = {
 
 String? initialRount;
 
-void main() {
-  initialRount = MyConstant.rountAuthen;
-  runApp(MyApp());
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  String? type = preferences.getString('type');
+  print('### type ==> $type');
+  if (type?.isEmpty ?? true) {
+    initialRount = MyConstant.rountAuthen;
+    runApp(MyApp());
+  } else {
+    switch (type) {
+      case 'user':
+        initialRount = MyConstant.rountAuthen;
+        runApp(MyApp());
+        break;
+      case 'buyer':
+        initialRount = MyConstant.rountBuyerService;
+        runApp(MyApp());
+        break;
+      case 'rider':
+        initialRount = MyConstant.rountRiderService;
+        runApp(MyApp());
+        break;
+      default:
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {
