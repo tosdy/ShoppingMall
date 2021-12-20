@@ -20,6 +20,7 @@ class MyConstant {
   static String image2 = 'images/image2.png';
   static String image3 = 'images/image3.png';
   static String image4 = 'images/image4.png';
+  static String image5 = 'images/image5.png';
   static String avatar = 'images/avatar.png';
 
   //Domain
