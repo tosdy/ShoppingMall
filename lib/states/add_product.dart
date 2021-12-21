@@ -1,6 +1,9 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_print
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_print, empty_catches
+
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
@@ -14,6 +17,20 @@ class AddProductState extends StatefulWidget {
 
 class _AddProductStateState extends State<AddProductState> {
   final formKey = GlobalKey<FormState>();
+  List<File?> files = [];
+  File? file;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void initialFile() {
+    for (var i = 0; i < 4; i++) {
+      files.add(null);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +75,16 @@ class _AddProductStateState extends State<AddProductState> {
     );
   }
 
+  Future<Null> processImagePicker(ImageSource source, int index) async {
+    try {
+      var result = await ImagePicker()
+          .pickImage(source: source, maxWidth: 800, maxHeight: 800);
+      setState(() {
+        file = File(result!.path);
+      });
+    } catch (e) {}
+  }
+
   Future<Null> chooseImageDialog(int index) async {
     print('Click Image : $index');
     showDialog(
@@ -79,11 +106,17 @@ class _AddProductStateState extends State<AddProductState> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                  processImagePicker(ImageSource.camera, index);
+                },
                 child: Text('Camera'),
               ),
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                  processImagePicker(ImageSource.camera, index);
+                },
                 child: Text('Gallery'),
               ),
             ],
@@ -99,7 +132,8 @@ class _AddProductStateState extends State<AddProductState> {
         Container(
           width: constraints.maxWidth * 0.75,
           height: constraints.maxWidth * 0.75,
-          child: Image.asset(MyConstant.image5),
+          child:
+              file == null ? Image.asset(MyConstant.image5) : Image.file(file!),
         ),
         Container(
           width: constraints.maxWidth * 0.75,
