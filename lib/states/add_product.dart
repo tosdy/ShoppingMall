@@ -1,7 +1,9 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/widgets/show_image.dart';
+import 'package:shoppingmall/widgets/show_title.dart';
 
 class AddProductState extends StatefulWidget {
   const AddProductState({Key? key}) : super(key: key);
@@ -11,6 +13,7 @@ class AddProductState extends StatefulWidget {
 }
 
 class _AddProductStateState extends State<AddProductState> {
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,25 +26,69 @@ class _AddProductStateState extends State<AddProductState> {
           behavior: HitTestBehavior.opaque,
           child: Center(
             child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  buildProduct(constraints),
-                  buildProductPrice(constraints),
-                  buildProductDetail(constraints),
-                  buildImage(constraints),
-                  Container(
-                    width: constraints.maxWidth * 0.75,
-                    child: ElevatedButton(
-                      style: MyConstant().myButtonStyle(),
-                      onPressed: () {},
-                      child: Text('Add Product'),
-                    ),
-                  )
-                ],
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    buildProduct(constraints),
+                    buildProductPrice(constraints),
+                    buildProductDetail(constraints),
+                    buildImage(constraints),
+                    addProductButton(constraints)
+                  ],
+                ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Container addProductButton(BoxConstraints constraints) {
+    return Container(
+      width: constraints.maxWidth * 0.75,
+      child: ElevatedButton(
+        style: MyConstant().myButtonStyle(),
+        onPressed: () {
+          if (formKey.currentState!.validate()) {}
+        },
+        child: Text('Add Product'),
+      ),
+    );
+  }
+
+  Future<Null> chooseImageDialog(int index) async {
+    print('Click Image : $index');
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: ListTile(
+          leading: Showimage(
+            path: MyConstant.image4,
+          ),
+          title: ShowTitle(
+              title: "Source Image: ${index + 1}",
+              textStyle: MyConstant().h2Style()),
+          subtitle: ShowTitle(
+              title: 'Please Tab on camera or Gallery',
+              textStyle: MyConstant().h3Style()),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Camera'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Gallery'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -62,22 +109,34 @@ class _AddProductStateState extends State<AddProductState> {
               Container(
                 width: 48,
                 height: 48,
-                child: Image.asset(MyConstant.image5),
+                child: InkWell(
+                  child: Image.asset(MyConstant.image5),
+                  onTap: () => chooseImageDialog(0),
+                ),
               ),
               Container(
                 width: 48,
                 height: 48,
-                child: Image.asset(MyConstant.image5),
+                child: InkWell(
+                  child: Image.asset(MyConstant.image5),
+                  onTap: () => chooseImageDialog(1),
+                ),
               ),
               Container(
                 width: 48,
                 height: 48,
-                child: Image.asset(MyConstant.image5),
+                child: InkWell(
+                  child: Image.asset(MyConstant.image5),
+                  onTap: () => chooseImageDialog(2),
+                ),
               ),
               Container(
                 width: 48,
                 height: 48,
-                child: Image.asset(MyConstant.image5),
+                child: InkWell(
+                  child: Image.asset(MyConstant.image5),
+                  onTap: () => chooseImageDialog(3),
+                ),
               ),
             ],
           ),
@@ -91,6 +150,13 @@ class _AddProductStateState extends State<AddProductState> {
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
       child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Product Name';
+          } else {
+            return null;
+          }
+        },
         decoration: InputDecoration(
           labelText: 'Product Name :',
           labelStyle: MyConstant().h3Style(),
@@ -106,6 +172,10 @@ class _AddProductStateState extends State<AddProductState> {
             borderSide: BorderSide(color: MyConstant.light),
             borderRadius: BorderRadius.circular(30),
           ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+            borderRadius: BorderRadius.circular(30),
+          ),
         ),
       ),
     );
@@ -116,6 +186,13 @@ class _AddProductStateState extends State<AddProductState> {
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
       child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Product Price';
+          } else {
+            return null;
+          }
+        },
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
           labelText: 'Product Price :',
@@ -132,6 +209,10 @@ class _AddProductStateState extends State<AddProductState> {
             borderSide: BorderSide(color: MyConstant.light),
             borderRadius: BorderRadius.circular(30),
           ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+            borderRadius: BorderRadius.circular(30),
+          ),
         ),
       ),
     );
@@ -142,6 +223,13 @@ class _AddProductStateState extends State<AddProductState> {
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
       child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Product Detail';
+          } else {
+            return null;
+          }
+        },
         maxLines: 4,
         decoration: InputDecoration(
           hintText: 'Product Detail :',
@@ -159,6 +247,10 @@ class _AddProductStateState extends State<AddProductState> {
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: MyConstant.light),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
             borderRadius: BorderRadius.circular(30),
           ),
         ),
