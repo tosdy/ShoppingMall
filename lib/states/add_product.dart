@@ -23,6 +23,7 @@ class _AddProductStateState extends State<AddProductState> {
   @override
   void initState() {
     super.initState();
+    initialFile();
   }
 
   void initialFile() {
@@ -81,6 +82,7 @@ class _AddProductStateState extends State<AddProductState> {
           .pickImage(source: source, maxWidth: 800, maxHeight: 800);
       setState(() {
         file = File(result!.path);
+        files[index] = file;
       });
     } catch (e) {}
   }
@@ -144,7 +146,9 @@ class _AddProductStateState extends State<AddProductState> {
                 width: 48,
                 height: 48,
                 child: InkWell(
-                  child: Image.asset(MyConstant.image5),
+                  child: files[0] == null
+                      ? Image.asset(MyConstant.image5)
+                      : Image.file(files[0]!),
                   onTap: () => chooseImageDialog(0),
                 ),
               ),
@@ -152,7 +156,9 @@ class _AddProductStateState extends State<AddProductState> {
                 width: 48,
                 height: 48,
                 child: InkWell(
-                  child: Image.asset(MyConstant.image5),
+                  child: files[1] == null
+                      ? Image.asset(MyConstant.image5)
+                      : Image.file(files[1]!),
                   onTap: () => chooseImageDialog(1),
                 ),
               ),
@@ -160,7 +166,9 @@ class _AddProductStateState extends State<AddProductState> {
                 width: 48,
                 height: 48,
                 child: InkWell(
-                  child: Image.asset(MyConstant.image5),
+                  child: files[2] == null
+                      ? Image.asset(MyConstant.image5)
+                      : Image.file(files[2]!),
                   onTap: () => chooseImageDialog(2),
                 ),
               ),
@@ -168,7 +176,9 @@ class _AddProductStateState extends State<AddProductState> {
                 width: 48,
                 height: 48,
                 child: InkWell(
-                  child: Image.asset(MyConstant.image5),
+                  child: files[3] == null
+                      ? Image.asset(MyConstant.image5)
+                      : Image.file(files[3]!),
                   onTap: () => chooseImageDialog(3),
                 ),
               ),
