@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_print, empty_catches
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_print, empty_catches, unrelated_type_equality_checks
 
 import 'dart:io';
 import 'dart:math';
@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
@@ -22,6 +23,10 @@ class _AddProductStateState extends State<AddProductState> {
   final formKey = GlobalKey<FormState>();
   List<File?> files = [];
   File? file;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController detailController = TextEditingController();
+  List<String> paths = [];
 
   @override
   void initState() {
@@ -94,21 +99,53 @@ class _AddProductStateState extends State<AddProductState> {
       }
 
       if (checkFile) {
+        MyDialog().showProgressDialog(context);
+
         print('### Choose 4 image suucess');
         String apiSaveProduct =
             '${MyConstant.domain}/shoppingmall/saveProduct.php';
+
+        int loop = 0;
         for (var item in files) {
           int i = Random().nextInt(1000000000);
           String nameFile = 'product$i.jpg';
+          paths.add('/product/$nameFile');
           Map<String, dynamic> map = {};
           map['file'] =
               await MultipartFile.fromFile(item!.path, filename: nameFile);
 
           FormData data = FormData.fromMap(map);
 
-          await Dio()
-              .post(apiSaveProduct, data: data)
-              .then((value) => print('Upload Success'));
+          await Dio().post(apiSaveProduct, data: data).then((value) async {
+            print('Upload Success');
+            loop++;
+            if (loop >= files.length) {
+              SharedPreferences preferance =
+                  await SharedPreferences.getInstance();
+              String idSeller = preferance.getString('id')!;
+              String name = preferance.getString('name')!;
+              String nameSeller = nameController.text;
+              String price = priceController.text;
+              String detail = detailController.text;
+              String images = paths.toString();
+              print('### idSeller = $idSeller | nameSeller = $nameSeller');
+              print('= name : $nameSeller | price : $price | detail : $detail');
+              print('images : $images');
+
+              String path =
+                  '${MyConstant.domain}/shoppingmall/insertProduct.php?isAdd=true&idSeller=$idSeller&nameSeller=$nameSeller&name=$name&price=$price&detail=$detail&images=$images';
+              await Dio().get(path).then((value) {
+                if (value == 'null') {
+                  print('Insert Success');
+                  //Navigator.pop(context);
+                } else {
+                  print('Insert Fail');
+                }
+              });
+
+              Navigator.pop(context); //Kill Popup Progress
+            }
+          });
         }
       } else {
         MyDialog()
@@ -119,8 +156,11 @@ class _AddProductStateState extends State<AddProductState> {
 
   Future<Null> processImagePicker(ImageSource source, int index) async {
     try {
-      var result = await ImagePicker()
-          .pickImage(source: source, maxWidth: 800, maxHeight: 800);
+      var result = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+      );
       setState(() {
         file = File(result!.path);
         files[index] = file;
@@ -235,6 +275,7 @@ class _AddProductStateState extends State<AddProductState> {
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
       child: TextFormField(
+        controller: nameController,
         validator: (value) {
           if (value!.isEmpty) {
             return 'Please Fill Product Name';
@@ -271,6 +312,7 @@ class _AddProductStateState extends State<AddProductState> {
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
       child: TextFormField(
+        controller: priceController,
         validator: (value) {
           if (value!.isEmpty) {
             return 'Please Fill Product Price';
@@ -308,6 +350,7 @@ class _AddProductStateState extends State<AddProductState> {
       width: constraints.maxWidth * 0.75,
       margin: EdgeInsets.only(top: 16),
       child: TextFormField(
+        controller: detailController,
         validator: (value) {
           if (value!.isEmpty) {
             return 'Please Fill Product Detail';
