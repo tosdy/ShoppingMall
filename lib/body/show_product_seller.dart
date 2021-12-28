@@ -1,12 +1,14 @@
-// ignore_for_file: prefer_const_constructors, unrelated_type_equality_checks, sized_box_for_whitespace, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, unrelated_type_equality_checks, sized_box_for_whitespace, avoid_unnecessary_containers, non_constant_identifier_names
 
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/models/product_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
 
@@ -94,6 +96,14 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
     );
   }
 
+  String CreateURL(String string) {
+    String result = string.substring(1, string.length - 1);
+    List<String> strings = result.split(',');
+    String URL = '${MyConstant.domain}/shoppingmall${strings[0]}';
+    print('image : $URL');
+    return URL;
+  }
+
   ListView buildListVIew(BoxConstraints constraints) {
     return ListView.builder(
       itemCount: productModels.length,
@@ -103,14 +113,39 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
             Container(
               padding: EdgeInsets.all(4),
               width: constraints.maxWidth * 0.5 - 4,
-              child: ShowTitle(
-                  title: productModels[index].name,
-                  textStyle: MyConstant().h2Style()),
+              height: constraints.maxWidth * 0.5,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ShowTitle(
+                      title: productModels[index].name,
+                      textStyle: MyConstant().h2Style()),
+                  Container(
+                    width: constraints.maxWidth * 0.5,
+                    height: constraints.maxWidth * 0.4,
+                    // child: Image.network(
+                    //   CreateURL(productModels[index].images),
+                    //   fit: BoxFit.cover,
+                    // ),
+                    child: CachedNetworkImage(
+                      imageUrl: CreateURL(productModels[index].images),
+                      placeholder: (context, url) => ShowProgress(),
+                      errorWidget: (context, url, error) => Showimage(
+                        path: MyConstant.image5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Container(
+              margin: EdgeInsets.only(top: 20),
               padding: EdgeInsets.all(4),
               width: constraints.maxWidth * 0.5 - 4,
+              height: constraints.maxWidth * 0.4,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ShowTitle(
@@ -119,6 +154,27 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
                   ShowTitle(
                       title: productModels[index].detail,
                       textStyle: MyConstant().h3Style()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.edit_outlined,
+                          size: 36,
+                          color: MyConstant.dark,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.delete_forever_outlined,
+                          size: 36,
+                          color: MyConstant.dark,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
