@@ -123,8 +123,8 @@ class _AddProductStateState extends State<AddProductState> {
               SharedPreferences preferance =
                   await SharedPreferences.getInstance();
               String idSeller = preferance.getString('id')!;
-              String name = preferance.getString('name')!;
-              String nameSeller = nameController.text;
+              String nameSeller = preferance.getString('name')!;
+              String name = nameController.text;
               String price = priceController.text;
               String detail = detailController.text;
               String images = paths.toString();
@@ -134,15 +134,7 @@ class _AddProductStateState extends State<AddProductState> {
 
               String path =
                   '${MyConstant.domain}/shoppingmall/insertProduct.php?isAdd=true&idSeller=$idSeller&nameSeller=$nameSeller&name=$name&price=$price&detail=$detail&images=$images';
-              await Dio().get(path).then((value) {
-                if (value == 'null') {
-                  print('Insert Success');
-                  //Navigator.pop(context);
-                } else {
-                  print('Insert Fail');
-                }
-              });
-
+              await Dio().get(path).then((value) => print('insert OK'));
               Navigator.pop(context); //Kill Popup Progress
             }
           });
