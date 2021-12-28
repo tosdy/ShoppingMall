@@ -97,29 +97,33 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
   ListView buildListVIew(BoxConstraints constraints) {
     return ListView.builder(
       itemCount: productModels.length,
-      itemBuilder: (context, index) => Row(
-        children: [
-          Container(
-            width: constraints.maxWidth * 0.5,
-            child: ShowTitle(
-                title: productModels[index].name,
-                textStyle: MyConstant().h2Style()),
-          ),
-          Container(
-            width: constraints.maxWidth * 0.5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ShowTitle(
-                    title: 'Price: ${productModels[index].price} THB',
-                    textStyle: MyConstant().h2Style()),
-                ShowTitle(
-                    title: productModels[index].detail,
-                    textStyle: MyConstant().h3Style()),
-              ],
+      itemBuilder: (context, index) => Card(
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(4),
+              width: constraints.maxWidth * 0.5 - 4,
+              child: ShowTitle(
+                  title: productModels[index].name,
+                  textStyle: MyConstant().h2Style()),
             ),
-          ),
-        ],
+            Container(
+              padding: EdgeInsets.all(4),
+              width: constraints.maxWidth * 0.5 - 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ShowTitle(
+                      title: 'Price: ${productModels[index].price} THB',
+                      textStyle: MyConstant().h2Style()),
+                  ShowTitle(
+                      title: productModels[index].detail,
+                      textStyle: MyConstant().h3Style()),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
