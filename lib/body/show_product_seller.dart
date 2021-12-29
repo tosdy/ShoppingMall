@@ -71,7 +71,7 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
     return Scaffold(
       body: load
           ? ShowProgress()
-          : haveData!
+          : haveData
               ? LayoutBuilder(
                   builder: (context, constraints) => buildListVIew(constraints),
                 )
