@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unrelated_type_equality_checks, sized_box_for_whitespace, avoid_unnecessary_containers, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, unrelated_type_equality_checks, sized_box_for_whitespace, avoid_unnecessary_containers, non_constant_identifier_names, avoid_print, prefer_is_empty
 
 import 'dart:convert';
 
@@ -30,6 +30,10 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
   }
 
   Future<Null> loadValueFromAPI() async {
+    if (productModels.length != 0) {
+      productModels.clear();
+    } else {}
+
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String idSeller = preferences.getString('id')!;
 
@@ -90,7 +94,8 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
                 ),
       floatingActionButton: FloatingActionButton(
         onPressed: () =>
-            Navigator.pushNamed(context, MyConstant.rountAddProduct),
+            Navigator.pushNamed(context, MyConstant.rountAddProduct)
+                .then((value) => loadValueFromAPI()),
         child: Text('Add'),
       ),
     );
@@ -203,7 +208,16 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () async {
+              String id = productModel.id;
+              print("Delete id : $id");
+              String apiDeleteProductWhereId =
+                  '${MyConstant.domain}/shoppingmall/deleteProductWhereId.php?isAdd=true&id=$id';
+              await Dio().get(apiDeleteProductWhereId).then((value) {
+                Navigator.pop(context);
+                loadValueFromAPI();
+              });
+            },
             child: Text('Delete'),
           ),
           TextButton(
