@@ -134,7 +134,9 @@ class _AddProductStateState extends State<AddProductState> {
 
               String path =
                   '${MyConstant.domain}/shoppingmall/insertProduct.php?isAdd=true&idSeller=$idSeller&nameSeller=$nameSeller&name=$name&price=$price&detail=$detail&images=$images';
-              await Dio().get(path).then((value) => print('insert OK'));
+              await Dio()
+                  .get(path)
+                  .then((value) => Navigator.pop(context)); //Previous PAge
               Navigator.pop(context); //Kill Popup Progress
             }
           });
