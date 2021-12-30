@@ -24,7 +24,8 @@ class MyConstant {
   static String avatar = 'images/avatar.png';
 
   //Domain
-  static String domain = 'https://2838-184-82-206-79.ngrok.io';
+  static String domain =
+      'https://ff16-2001-fb1-53-bcff-d9e9-620b-41fa-e853.ngrok.io';
 
 //Color
   static Color primary = Color(0xff9e9d24);
