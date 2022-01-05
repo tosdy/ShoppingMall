@@ -280,6 +280,10 @@ class _EditProductState extends State<EditProduct> {
         images = pathImages.toString();
         Navigator.pop(context);
       }
+
+      String apiEditProduct =
+          '${MyConstant.domain}/shoppingmall/editProductWhereId.php?isAdd=true&id=$id&name=$name&price=$price&images=$images';
+      await Dio().get(apiEditProduct).then((value) => Navigator.pop(context));
     }
   }
 }

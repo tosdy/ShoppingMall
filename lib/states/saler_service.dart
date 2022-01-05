@@ -1,9 +1,15 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
 
+import 'dart:convert';
+import 'dart:ffi';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/body/shop_manage_seller.dart';
 import 'package:shoppingmall/body/show_order_seller.dart';
 import 'package:shoppingmall/body/show_product_seller.dart';
+import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/widgets/show_signout.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
@@ -22,9 +28,40 @@ class _SalerServiceState extends State<SalerService> {
     ShowProductSeller()
   ];
   int indexWidget = 0;
+  UserModel? userModel;
+
+  @override
+  void initState() {
+    super.initState();
+    print('Seller Init State(1)');
+    findUserModel();
+    print('Seller Init State(2)');
+  }
+
+  Future<Null> findUserModel() async {
+    print('findUserModel');
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String id = preferences.getString('id')!;
+
+    print('## id Login : $id');
+    String apiGetUserWhereId =
+        '${MyConstant.domain}/shoppingmall/getUserWhereId.php?isAdd=true&id=$id';
+
+    await Dio().get(apiGetUserWhereId).then((value) {
+      print('## Value : $value');
+      for (var item in json.decode(value.data)) {
+        setState(() {
+          userModel = UserModel.fromMap(item);
+          print('### name logined = ${userModel!.name}');
+          print('### user avatar = ${userModel!.avatar}');
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    print('build');
     return Scaffold(
       appBar: AppBar(
         title: Text('Saler'),
@@ -36,7 +73,7 @@ class _SalerServiceState extends State<SalerService> {
             Column(
               // ignore: prefer_const_literals_to_create_immutables
               children: [
-                UserAccountsDrawerHeader(accountName: null, accountEmail: null),
+                buildHead(),
                 menuShowOrder(),
                 menuShopManage(),
                 menuShowProduct(),
@@ -47,6 +84,35 @@ class _SalerServiceState extends State<SalerService> {
       ),
       body: widgets[indexWidget],
     );
+  }
+
+  UserAccountsDrawerHeader buildHead() {
+    return UserAccountsDrawerHeader(
+        otherAccountsPictures: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.face,
+            ),
+            color: MyConstant.light,
+            tooltip: 'Edit Shop',
+            iconSize: 36,
+          )
+        ],
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            colors: [MyConstant.light, MyConstant.dark],
+            center: Alignment(-0.8, -0.2),
+            radius: 1,
+          ),
+        ),
+        currentAccountPicture: CircleAvatar(
+          backgroundImage: userModel == null
+              ? NetworkImage('')
+              : NetworkImage('${MyConstant.domain}${userModel!.avatar}'),
+        ),
+        accountName: Text(userModel == null ? 'Name ?' : userModel!.name),
+        accountEmail: Text(userModel == null ? 'Type ?' : userModel!.type));
   }
 
   ListTile menuShowOrder() {
