@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_print
+// ignore_for_file: prefer_const_constructors, avoid_print, prefer_is_empty
 
 import 'dart:convert';
 import 'dart:ffi';
@@ -11,6 +11,7 @@ import 'package:shoppingmall/body/show_order_seller.dart';
 import 'package:shoppingmall/body/show_product_seller.dart';
 import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_signout.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
 
@@ -22,11 +23,7 @@ class SalerService extends StatefulWidget {
 }
 
 class _SalerServiceState extends State<SalerService> {
-  List<Widget> widgets = [
-    ShowOrderSeller(),
-    ShopManageSeller(),
-    ShowProductSeller()
-  ];
+  List<Widget> widgets = [];
   int indexWidget = 0;
   UserModel? userModel;
 
@@ -48,12 +45,12 @@ class _SalerServiceState extends State<SalerService> {
         '${MyConstant.domain}/shoppingmall/getUserWhereId.php?isAdd=true&id=$id';
 
     await Dio().get(apiGetUserWhereId).then((value) {
-      print('## Value : $value');
       for (var item in json.decode(value.data)) {
         setState(() {
           userModel = UserModel.fromMap(item);
-          print('### name logined = ${userModel!.name}');
-          print('### user avatar = ${userModel!.avatar}');
+          widgets.add(ShowOrderSeller());
+          widgets.add(ShopManageSeller(userModel: userModel!));
+          widgets.add(ShowProductSeller());
         });
       }
     });
@@ -66,23 +63,25 @@ class _SalerServiceState extends State<SalerService> {
       appBar: AppBar(
         title: Text('Saler'),
       ),
-      drawer: Drawer(
-        child: Stack(
-          children: [
-            ShowSignOut(),
-            Column(
-              // ignore: prefer_const_literals_to_create_immutables
-              children: [
-                buildHead(),
-                menuShowOrder(),
-                menuShopManage(),
-                menuShowProduct(),
-              ],
+      drawer: widgets.length == 0
+          ? SizedBox()
+          : Drawer(
+              child: Stack(
+                children: [
+                  ShowSignOut(),
+                  Column(
+                    // ignore: prefer_const_literals_to_create_immutables
+                    children: [
+                      buildHead(),
+                      menuShowOrder(),
+                      menuShopManage(),
+                      menuShowProduct(),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-      body: widgets[indexWidget],
+      body: widgets.length == 0 ? ShowProgress() : widgets[indexWidget],
     );
   }
 
