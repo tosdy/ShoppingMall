@@ -27,6 +27,8 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
   TextEditingController addressController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   LatLng? latLng;
+  final formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -79,23 +81,48 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Profile Saller'),
+        actions: [
+          IconButton(
+            onPressed: () => processEditProfile(),
+            icon: Icon(Icons.edit),
+            tooltip: 'Edit Profile Saler',
+          ),
+        ],
       ),
       body: LayoutBuilder(
-        builder: (context, constraints) => ListView(
-          padding: EdgeInsets.all(16),
-          children: [
-            buildTitle('General'),
-            buildName(constraints),
-            buildAddress(constraints),
-            buildPhone(constraints),
-            buildTitle('Avatar : '),
-            buildAvatar(constraints),
-            buildTitle('Location :'),
-            buildMap(constraints)
-          ],
+        builder: (context, constraints) => GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+          behavior: HitTestBehavior.opaque,
+          child: Form(
+            key: formKey,
+            child: ListView(
+              padding: EdgeInsets.all(16),
+              children: [
+                buildTitle('General'),
+                buildName(constraints),
+                buildAddress(constraints),
+                buildPhone(constraints),
+                buildTitle('Avatar : '),
+                buildAvatar(constraints),
+                buildTitle('Location :'),
+                buildMap(constraints),
+                buildButtonEditProfile(),
+              ],
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  ElevatedButton buildButtonEditProfile() {
+    return ElevatedButton.icon(
+        onPressed: () {},
+        icon: Icon(
+          Icons.edit,
+          color: MyConstant.light,
+        ),
+        label: Text('Edit Saler'));
   }
 
   Row buildMap(BoxConstraints constraints) {
@@ -135,6 +162,11 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
     );
   }
 
+  Future<Null> processEditProfile() async {
+    print("Button Edit Process!!");
+    if (formKey.currentState!.validate()) {}
+  }
+
   Row buildAvatar(BoxConstraints constraints) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +177,7 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
           child: Row(
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () => processEditProfile(),
                 icon: Icon(Icons.add_a_photo),
                 color: MyConstant.dark,
               ),
@@ -185,6 +217,13 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
           margin: EdgeInsets.only(top: 16),
           width: constraints.maxWidth * 0.6,
           child: TextFormField(
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Name is empty';
+              } else {
+                return null;
+              }
+            },
             controller: nameController,
             decoration: InputDecoration(
               labelText: 'Name: ',
@@ -204,6 +243,13 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
           margin: EdgeInsets.only(top: 16),
           width: constraints.maxWidth * 0.6,
           child: TextFormField(
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Address is empty';
+              } else {
+                return null;
+              }
+            },
             maxLines: 3,
             controller: addressController,
             decoration: InputDecoration(
@@ -224,6 +270,14 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
           margin: EdgeInsets.symmetric(vertical: 16),
           width: constraints.maxWidth * 0.6,
           child: TextFormField(
+            keyboardType: TextInputType.phone,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Phone is empty';
+              } else {
+                return null;
+              }
+            },
             controller: phoneController,
             decoration: InputDecoration(
               labelText: 'Phone: ',
