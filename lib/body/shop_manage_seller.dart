@@ -28,6 +28,11 @@ class _ShopManageSellerState extends State<ShopManageSeller> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.edit),
+        onPressed: () =>
+            Navigator.pushNamed(context, MyConstant.rountEditProfileSaler),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) => Padding(
           padding: const EdgeInsets.all(8.0),
