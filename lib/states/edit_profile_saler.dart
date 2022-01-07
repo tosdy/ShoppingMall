@@ -1,12 +1,14 @@
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_collection_literals
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
@@ -28,6 +30,7 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
   TextEditingController phoneController = TextEditingController();
   LatLng? latLng;
   final formKey = GlobalKey<FormState>();
+  File? file;
 
   @override
   void initState() {
@@ -117,7 +120,7 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
 
   ElevatedButton buildButtonEditProfile() {
     return ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: () => processEditProfile(),
         icon: Icon(
           Icons.edit,
           color: MyConstant.light,
@@ -167,6 +170,17 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
     if (formKey.currentState!.validate()) {}
   }
 
+  Future<Null> createAvatar({ImageSource? source}) async {
+    try {
+      var result = await ImagePicker()
+          .pickImage(source: source!, maxWidth: 800, maxHeight: 800);
+
+      setState(() {
+        file = File(result!.path);
+      });
+    } catch (e) {}
+  }
+
   Row buildAvatar(BoxConstraints constraints) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -177,7 +191,7 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
           child: Row(
             children: [
               IconButton(
-                onPressed: () => processEditProfile(),
+                onPressed: () => createAvatar(source: ImageSource.camera),
                 icon: Icon(Icons.add_a_photo),
                 color: MyConstant.dark,
               ),
@@ -190,15 +204,13 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
                         padding: const EdgeInsets.all(8.0),
                         child: userModel!.avatar == null
                             ? Showimage(path: MyConstant.avatar)
-                            : CachedNetworkImage(
-                                imageUrl:
-                                    '${MyConstant.domain}${userModel!.avatar}',
-                                placeholder: (context, url) => ShowProgress(),
-                              ),
+                            : (file == null
+                                ? buildShowImageNetwork()
+                                : Image.file(file!)),
                       ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () => createAvatar(source: ImageSource.gallery),
                 icon: Icon(Icons.add_photo_alternate),
                 color: MyConstant.dark,
               ),
@@ -206,6 +218,13 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
           ),
         ),
       ],
+    );
+  }
+
+  CachedNetworkImage buildShowImageNetwork() {
+    return CachedNetworkImage(
+      imageUrl: '${MyConstant.domain}${userModel!.avatar}',
+      placeholder: (context, url) => ShowProgress(),
     );
   }
 
