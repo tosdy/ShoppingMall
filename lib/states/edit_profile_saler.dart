@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
@@ -10,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shoppingmall/main.dart';
 import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
@@ -167,8 +169,31 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
 
   Future<Null> processEditProfile() async {
     print("Button Edit Process!!");
-    if (formKey.currentState!.validate()) {}
+    if (formKey.currentState!.validate()) {
+      if (file == null) {
+        print('## Not Change Avatar');
+      } else {
+        print('##Change Avatar');
+        String apiSaveAvatar =
+            '${MyConstant.domain}/shoppingmall/saveAvatar.php';
+        List<String> nameAvatars = userModel!.avatar.split('/');
+        String nameFile = nameAvatars[nameAvatars.length - 1];
+        nameFile = 'edit${Random().nextInt(100)}$nameFile';
+        print('FileNameEdit = $nameFile');
+
+        Map<String, dynamic> map = {};
+        map['file'] =
+            await MultipartFile.fromFile(file!.path, filename: nameFile);
+        FormData formData = FormData.fromMap(map);
+
+        await Dio()
+            .post(apiSaveAvatar, data: formData)
+            .then((value) => print('upload success'));
+      }
+    }
   }
+
+  Future<Null> editValueToMySQL() async {}
 
   Future<Null> createAvatar({ImageSource? source}) async {
     try {
