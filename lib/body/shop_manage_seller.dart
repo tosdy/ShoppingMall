@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers, prefer_collection_literals
 
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shoppingmall/models/user_model.dart';
@@ -25,13 +28,26 @@ class _ShopManageSellerState extends State<ShopManageSeller> {
     userModel = widget.userModel;
   }
 
+  Future<Null> refreshUserModel() async {
+    String apiGetUser =
+        '${MyConstant.domain}/shoppingmall/getUserWhereId.php?isAdd=true&id=${userModel!.id}';
+    await Dio().get(apiGetUser).then((value) {
+      for (var item in json.decode(value.data)) {
+        setState(() {
+          userModel = UserModel.fromMap(item);
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.edit),
         onPressed: () =>
-            Navigator.pushNamed(context, MyConstant.rountEditProfileSaler),
+            Navigator.pushNamed(context, MyConstant.rountEditProfileSaler)
+                .then((value) => refreshUserModel()),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) => Padding(

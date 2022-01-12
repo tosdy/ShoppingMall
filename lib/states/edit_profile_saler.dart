@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/main.dart';
 import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
@@ -169,9 +170,13 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
 
   Future<Null> processEditProfile() async {
     print("Button Edit Process!!");
+
+    MyDialog().showProgressDialog(context);
+
     if (formKey.currentState!.validate()) {
       if (file == null) {
         print('## Not Change Avatar');
+        editValueToMySQL(userModel!.avatar);
       } else {
         print('##Change Avatar');
         String apiSaveAvatar =
@@ -186,14 +191,23 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
             await MultipartFile.fromFile(file!.path, filename: nameFile);
         FormData formData = FormData.fromMap(map);
 
-        await Dio()
-            .post(apiSaveAvatar, data: formData)
-            .then((value) => print('upload success'));
+        await Dio().post(apiSaveAvatar, data: formData).then((value) {
+          print('upload success');
+          String pathAvatar = '/shoppingmall/avatar/$nameFile';
+          editValueToMySQL(pathAvatar);
+        });
       }
     }
   }
 
-  Future<Null> editValueToMySQL() async {}
+  Future<Null> editValueToMySQL(String pathAvatar) async {
+    String apiEditProfile =
+        '${MyConstant.domain}/shoppingmall/editProfileSalerWhereId.php?isAdd=true&id=${userModel!.id}&name=${nameController.text}&address=${addressController.text}&phone=${phoneController.text}&avatar=$pathAvatar&lat=${latLng!.latitude}&lng=${latLng!.longitude}';
+    await Dio().get(apiEditProfile).then((value) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
+  }
 
   Future<Null> createAvatar({ImageSource? source}) async {
     try {
