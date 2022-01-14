@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingmall/models/user_model.dart';
+import 'package:shoppingmall/states/show_product_buyer.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
@@ -54,27 +55,38 @@ class _ShowAllShopBuyerState extends State<ShowAllShopBuyer> {
               itemCount: userModels.length,
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   childAspectRatio: 2 / 3, maxCrossAxisExtent: 200),
-              itemBuilder: (context, index) => Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        height: 80,
-                        width: 80,
-                        child: CachedNetworkImage(
-                            errorWidget: (context, url, error) =>
-                                Showimage(path: MyConstant.avatar),
-                            placeholder: (context, url) => ShowProgress(),
-                            fit: BoxFit.cover,
-                            imageUrl:
-                                '${MyConstant.domain}${userModels[index].avatar}'),
-                      ),
-                      ShowTitle(
-                          title: cutWord(userModels[index].name),
-                          textStyle: MyConstant().h3Style()),
-                    ],
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: () {
+                  print("Click form ${userModels[index].name}");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ShowProductBuyer(userModel: userModels[index]),
+                      ));
+                },
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Container(
+                          height: 80,
+                          width: 80,
+                          child: CachedNetworkImage(
+                              errorWidget: (context, url, error) =>
+                                  Showimage(path: MyConstant.avatar),
+                              placeholder: (context, url) => ShowProgress(),
+                              fit: BoxFit.cover,
+                              imageUrl:
+                                  '${MyConstant.domain}${userModels[index].avatar}'),
+                        ),
+                        ShowTitle(
+                            title: cutWord(userModels[index].name),
+                            textStyle: MyConstant().h3Style()),
+                      ],
+                    ),
                   ),
                 ),
               ),
