@@ -91,47 +91,52 @@ class _AuthenState extends State<Authen> {
   Future<Null> chekcAuther({String? user, String? password}) async {
     String apiCheckAuthen =
         '${MyConstant.domain}/shoppingmall/getUserWhereUser.php?isAdd=true&user=$user';
-    await Dio().get(apiCheckAuthen).then((value) async {
-      print('## Value == $value');
-      if (value.toString() == 'null') {
-        MyDialog()
-            .normalDialog(context, 'User Fail !!', 'No $user in my database');
-      } else {
-        for (var item in json.decode(value.data)) {
-          UserModel model = UserModel.fromMap(item);
-          if (password == model.password) {
-            // success
-            String type = model.type;
-            print('### user type = $type');
-            SharedPreferences preferences =
-                await SharedPreferences.getInstance();
-            preferences.setString('id', model.id);
-            preferences.setString('type', type);
-            preferences.setString('user', model.user);
-            preferences.setString('name', model.name);
-            switch (type) {
-              case 'buyer':
-                Navigator.pushNamedAndRemoveUntil(
-                    context, MyConstant.rountBuyerService, (route) => false);
-                break;
-              case 'seller':
-                Navigator.pushNamedAndRemoveUntil(
-                    context, MyConstant.rountSalerService, (route) => false);
-                break;
-              case 'rider':
-                Navigator.pushNamedAndRemoveUntil(
-                    context, MyConstant.rountRiderService, (route) => false);
-                break;
 
-              default:
+    try {
+      await Dio().get(apiCheckAuthen).then((value) async {
+        print('## Value == $value');
+        if (value.toString() == 'null') {
+          MyDialog()
+              .normalDialog(context, 'User Fail !!', 'No $user in my database');
+        } else {
+          for (var item in json.decode(value.data)) {
+            UserModel model = UserModel.fromMap(item);
+            if (password == model.password) {
+              // success
+              String type = model.type;
+              print('### user type = $type');
+              SharedPreferences preferences =
+                  await SharedPreferences.getInstance();
+              preferences.setString('id', model.id);
+              preferences.setString('type', type);
+              preferences.setString('user', model.user);
+              preferences.setString('name', model.name);
+              switch (type) {
+                case 'buyer':
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, MyConstant.rountBuyerService, (route) => false);
+                  break;
+                case 'seller':
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, MyConstant.rountSalerService, (route) => false);
+                  break;
+                case 'rider':
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, MyConstant.rountRiderService, (route) => false);
+                  break;
+
+                default:
+              }
+            } else {
+              MyDialog().normalDialog(
+                  context, 'Password Fail !!', 'Please Try Again');
             }
-          } else {
-            MyDialog()
-                .normalDialog(context, 'Password Fail !!', 'Please Try Again');
           }
         }
-      }
-    });
+      });
+    } catch (e) {
+      MyDialog().normalDialog(context, 'fail', 'Can not login');
+    }
   }
 
   Row buildUser(double size) {

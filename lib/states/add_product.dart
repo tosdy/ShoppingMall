@@ -192,7 +192,7 @@ class _AddProductStateState extends State<AddProductState> {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  processImagePicker(ImageSource.camera, index);
+                  processImagePicker(ImageSource.gallery, index);
                 },
                 child: Text('Gallery'),
               ),
