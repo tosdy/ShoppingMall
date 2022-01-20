@@ -38,7 +38,7 @@ class _EditProductState extends State<EditProduct> {
   void initState() {
     super.initState();
     productModel = widget.productModel;
-    print('EditProduct : ${productModel!.name}');
+    print('###EditProduct : ${productModel!.name}');
 
     ConvertStringArray();
     nameControler.text = productModel!.name;

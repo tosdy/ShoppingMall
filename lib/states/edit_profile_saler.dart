@@ -70,7 +70,7 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
         '${MyConstant.domain}/shoppingmall/getUserWhereUser.php?isAdd=true&user=$user';
 
     await Dio().get(apiGetUser).then((value) {
-      print('## Value = $value');
+      print('### Value = $value');
       for (var item in json.decode(value.data)) {
         setState(() {
           userModel = UserModel.fromMap(item);
@@ -175,16 +175,16 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
 
     if (formKey.currentState!.validate()) {
       if (file == null) {
-        print('## Not Change Avatar');
+        print('### Not Change Avatar');
         editValueToMySQL(userModel!.avatar);
       } else {
-        print('##Change Avatar');
+        print('###Change Avatar');
         String apiSaveAvatar =
             '${MyConstant.domain}/shoppingmall/saveAvatar.php';
         List<String> nameAvatars = userModel!.avatar.split('/');
         String nameFile = nameAvatars[nameAvatars.length - 1];
         nameFile = 'edit${Random().nextInt(100)}$nameFile';
-        print('FileNameEdit = $nameFile');
+        print('###FileNameEdit = $nameFile');
 
         Map<String, dynamic> map = {};
         map['file'] =
@@ -192,7 +192,7 @@ class _EditProfileSalerState extends State<EditProfileSaler> {
         FormData formData = FormData.fromMap(map);
 
         await Dio().post(apiSaveAvatar, data: formData).then((value) {
-          print('upload success');
+          print('###upload success');
           String pathAvatar = '/shoppingmall/avatar/$nameFile';
           editValueToMySQL(pathAvatar);
         });

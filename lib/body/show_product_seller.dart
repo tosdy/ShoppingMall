@@ -51,7 +51,7 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
       } else {
         for (var item in json.decode(value.data)) {
           ProductModel model = ProductModel.fromMap(item);
-          print('Product Name : ${model.name}');
+          print('###Product Name : ${model.name}');
           setState(() {
             load = false;
             haveData = true;
@@ -107,7 +107,7 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
     String result = string.substring(1, string.length - 1);
     List<String> strings = result.split(',');
     String URL = '${MyConstant.domain}/shoppingmall${strings[0]}';
-    print('image : $URL');
+    print('###image : $URL');
     return URL;
   }
 
@@ -166,7 +166,7 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          print("Click Edit Button");
+                          print("###Click Edit Button");
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -221,7 +221,7 @@ class _ShowProductSellerState extends State<ShowProductSeller> {
           TextButton(
             onPressed: () async {
               String id = productModel.id;
-              print("Delete id : $id");
+              print("###Delete id : $id");
               String apiDeleteProductWhereId =
                   '${MyConstant.domain}/shoppingmall/deleteProductWhereId.php?isAdd=true&id=$id';
               await Dio().get(apiDeleteProductWhereId).then((value) {

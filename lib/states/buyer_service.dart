@@ -24,6 +24,14 @@ class _BuyerServiceState extends State<BuyerService> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // ignore: prefer_const_literals_to_create_immutables
+        actions: [
+          IconButton(
+            onPressed: () =>
+                Navigator.pushNamed(context, MyConstant.rountShowCart),
+            icon: Icon(Icons.shopping_cart),
+          ),
+        ],
         title: Text('Buyer'),
       ),
       drawer: Drawer(

@@ -15,6 +15,7 @@ class MyConstant {
   static String rountRiderService = '/riderService';
   static String rountAddProduct = '/addProduct';
   static String rountEditProfileSaler = '/editProfileSaler';
+  static String rountShowCart = '/showCart';
 
   //image
   static String image1 = 'images/image1.png';
@@ -25,7 +26,7 @@ class MyConstant {
   static String avatar = 'images/avatar.png';
 
   //Domain
-  static String domain = 'http://23bf-184-82-193-170.ngrok.io';
+  static String domain = 'http://96f9-184-82-197-224.ngrok.io';
 
 //Color
   static Color primary = Color(0xff9e9d24);
@@ -54,6 +55,12 @@ class MyConstant {
 
   TextStyle h2WhiteStyle() =>
       TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w700);
+
+  TextStyle h2RedStyle() =>
+      TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.w700);
+
+  TextStyle h2BlueStyle() =>
+      TextStyle(fontSize: 18, color: Colors.blue, fontWeight: FontWeight.w700);
 
   TextStyle h3Style() =>
       TextStyle(fontSize: 14, color: dark, fontWeight: FontWeight.normal);

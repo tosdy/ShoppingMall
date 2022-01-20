@@ -30,17 +30,17 @@ class _SalerServiceState extends State<SalerService> {
   @override
   void initState() {
     super.initState();
-    print('Seller Init State(1)');
+    print('###Seller Init State(1)');
     findUserModel();
-    print('Seller Init State(2)');
+    print('###Seller Init State(2)');
   }
 
   Future<Null> findUserModel() async {
-    print('findUserModel');
+    print('###findUserModel');
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String id = preferences.getString('id')!;
 
-    print('## id Login : $id');
+    print('###id Login : $id');
     String apiGetUserWhereId =
         '${MyConstant.domain}/shoppingmall/getUserWhereId.php?isAdd=true&id=$id';
 
@@ -58,7 +58,7 @@ class _SalerServiceState extends State<SalerService> {
 
   @override
   Widget build(BuildContext context) {
-    print('build');
+    print('###build');
     return Scaffold(
       appBar: AppBar(
         title: Text('Saler'),

@@ -117,7 +117,7 @@ class _AddProductStateState extends State<AddProductState> {
           FormData data = FormData.fromMap(map);
 
           await Dio().post(apiSaveProduct, data: data).then((value) async {
-            print('Upload Success');
+            print('###Upload Success');
             loop++;
             if (loop >= files.length) {
               SharedPreferences preferance =
@@ -129,8 +129,9 @@ class _AddProductStateState extends State<AddProductState> {
               String detail = detailController.text;
               String images = paths.toString();
               print('### idSeller = $idSeller | nameSeller = $nameSeller');
-              print('= name : $nameSeller | price : $price | detail : $detail');
-              print('images : $images');
+              print(
+                  '###= name : $nameSeller | price : $price | detail : $detail');
+              print('###images : $images');
 
               String path =
                   '${MyConstant.domain}/shoppingmall/insertProduct.php?isAdd=true&idSeller=$idSeller&nameSeller=$nameSeller&name=$name&price=$price&detail=$detail&images=$images';
@@ -163,7 +164,7 @@ class _AddProductStateState extends State<AddProductState> {
   }
 
   Future<Null> chooseImageDialog(int index) async {
-    print('Click Image : $index');
+    print('###Click Image : $index');
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

@@ -37,7 +37,7 @@ class _CreateAccountState extends State<CreateAccount> {
   @override
   void initState() {
     super.initState();
-    print('Init State..');
+    print('###Init State..');
     CheckPermisstion();
   }
 
@@ -46,7 +46,7 @@ class _CreateAccountState extends State<CreateAccount> {
     LocationPermission locationPermission;
     locationService = await Geolocator.isLocationServiceEnabled();
     if (locationService) {
-      print('Service Location Open');
+      print('###Service Location Open');
       locationPermission = await Geolocator.checkPermission();
 
       if (locationPermission == LocationPermission.denied) {
@@ -55,7 +55,7 @@ class _CreateAccountState extends State<CreateAccount> {
           MyDialog().alertLocationService(
               context, 'ไม่อนุญาต แชร์ Location', 'โปรดแชร์ Location');
         } else {
-          print("Find Lat Lng -1");
+          print("###Find Lat Lng -1");
           findLanLng();
         }
       } else {
@@ -63,12 +63,12 @@ class _CreateAccountState extends State<CreateAccount> {
           MyDialog().alertLocationService(
               context, 'ไม่อนุญาต แชร์ Location', 'โปรดแชร์ Location');
         } else {
-          print("Find Lat Lng -2");
+          print("###Find Lat Lng -2");
           findLanLng();
         }
       }
     } else {
-      print('Service Location Close');
+      print('###Service Location Close');
       MyDialog().alertLocationService(context, 'Location sevice ของคุณปิดอยู่',
           'กรุณาเปิด Location Service ด้วยคะ');
     }
@@ -79,7 +79,7 @@ class _CreateAccountState extends State<CreateAccount> {
     setState(() {
       lat = position!.latitude;
       lng = position.longitude;
-      print('lat = $lat , lng = $lng');
+      print('###lat = $lat , lng = $lng');
     });
   }
 
@@ -326,11 +326,11 @@ class _CreateAccountState extends State<CreateAccount> {
       onPressed: () {
         if (formKey.currentState!.validate()) {
           if (typeUser == null) {
-            print('Non Choose Type User');
+            print('###Non Choose Type User');
             MyDialog().normalDialog(
                 context, 'ยังไม่ได้เลือกชนิด user', 'กรุณาเลือกชนิดของ user');
           } else {
-            print('Process Insert to Database');
+            print('###Process Insert to Database');
             uploadPictureAndInsertData();
           }
         }

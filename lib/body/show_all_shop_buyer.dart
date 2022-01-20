@@ -31,19 +31,22 @@ class _ShowAllShopBuyerState extends State<ShowAllShopBuyer> {
 
   Future<Null> readApiAllShop() async {
     String urlAPI = '${MyConstant.domain}/shoppingmall/getUserWhereSaler.php';
-    await Dio().get(urlAPI).then((value) {
-      setState(() {
-        load = false;
-      });
-      var result = json.decode(value.data); // change unicode => text
-      for (var item in result) {
-        UserModel model = UserModel.fromMap(item);
-        //print('Shop Name : ${model.name}');
+
+    try {
+      await Dio().get(urlAPI).then((value) {
         setState(() {
-          userModels.add(model);
+          load = false;
         });
-      }
-    });
+        var result = json.decode(value.data); // change unicode => text
+        for (var item in result) {
+          UserModel model = UserModel.fromMap(item);
+          //print('Shop Name : ${model.name}');
+          setState(() {
+            userModels.add(model);
+          });
+        }
+      });
+    } catch (e) {}
   }
 
   @override
@@ -57,7 +60,7 @@ class _ShowAllShopBuyerState extends State<ShowAllShopBuyer> {
                   childAspectRatio: 2 / 3, maxCrossAxisExtent: 200),
               itemBuilder: (context, index) => GestureDetector(
                 onTap: () {
-                  print("Click form ${userModels[index].name}");
+                  print('###Click form ${userModels[index].name}');
                   Navigator.push(
                       context,
                       MaterialPageRoute(
