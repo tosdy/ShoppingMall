@@ -1,11 +1,15 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingmall/models/product_model.dart';
+import 'package:shoppingmall/models/sqlite_model.dart';
 import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/utility/sqlite_helper.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
@@ -25,6 +29,7 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
   List<ProductModel> productModels = [];
   List<List<String>> listImages = [];
   int indexImage = 0;
+  int amountInt = 1;
 
   @override
   void initState() {
@@ -92,7 +97,7 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
         itemCount: productModels.length,
         itemBuilder: (context, index) => GestureDetector(
           onTap: () {
-            print('Click Card : $index');
+            print('###Click Card : $index');
             showAlertDialog(productModels[index], listImages[index]);
           },
           child: Card(
@@ -154,7 +159,7 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
       index++;
     }
     String result = '${MyConstant.domain}/shoppingmall${strings[0]}';
-    print('image display = $result');
+    print('###image display = $result');
     return result;
   }
 
@@ -241,10 +246,86 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
                             ),
                           ],
                         ),
-                      )
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              if (amountInt > 1) {
+                                setState(() {
+                                  amountInt--;
+                                });
+                              }
+                            },
+                            icon: Icon(Icons.remove_circle_outline),
+                            color: MyConstant.dark,
+                          ),
+                          ShowTitle(
+                              title: amountInt.toString(),
+                              textStyle: MyConstant().h1Style()),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                amountInt++;
+                              });
+                            },
+                            icon: Icon(Icons.add_circle_outline),
+                            color: MyConstant.dark,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton(
+                        onPressed: () async {
+                          //Navigator.pop(context);
+                          String idSeller = userModel!.id;
+                          String idProduct = productModel.id;
+                          String name = productModel.name;
+                          String price = productModel.price;
+                          String amount = amountInt.toString();
+                          int sumInt = int.parse(price) * amountInt;
+                          String sum = sumInt.toString();
+                          print(
+                              '### Print idSeller = $idSeller | idPRoduct = $idProduct | name = $name');
+                          print('### Price = $price');
+                          print('### Sum = $sum');
+                          SQLiteModel sqLiteModel = SQLiteModel(
+                              idSeller: idSeller,
+                              idProduct: idProduct,
+                              name: name,
+                              price: price,
+                              amount: amount,
+                              sum: sum);
+                          await SQLiteHelper()
+                              .insertValueToSQLite(sqLiteModel)
+                              .then((value) {
+                            amountInt = 1;
+                            Navigator.pop(context);
+                            //Navigator.pop(context);
+                          });
+                        },
+                        child: Text(
+                          'Add Cart',
+                          style: MyConstant().h2BlueStyle(),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          'Cancel',
+                          style: MyConstant().h2RedStyle(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ));
   }
