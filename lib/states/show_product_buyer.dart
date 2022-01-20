@@ -9,6 +9,7 @@ import 'package:shoppingmall/models/product_model.dart';
 import 'package:shoppingmall/models/sqlite_model.dart';
 import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/utility/sqlite_helper.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
@@ -30,6 +31,7 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
   List<List<String>> listImages = [];
   int indexImage = 0;
   int amountInt = 1;
+  String? curenceIdSeller;
 
   @override
   void initState() {
@@ -37,6 +39,19 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
 
     userModel = widget.userModel;
     readApi();
+    readCart();
+  }
+
+  Future<void> readCart() async {
+    await SQLiteHelper().readSQLite().then((value) {
+      if (value.length != 0) {
+        List<SQLiteModel> models = [];
+        for (var model in value) {
+          models.add(model);
+        }
+        curenceIdSeller = models[0].idSeller;
+      }
+    });
   }
 
   Future<void> readApi() async {
@@ -284,32 +299,40 @@ class _ShowProductBuyerState extends State<ShowProductBuyer> {
                     children: [
                       TextButton(
                         onPressed: () async {
-                          //Navigator.pop(context);
                           String idSeller = userModel!.id;
                           String idProduct = productModel.id;
                           String name = productModel.name;
                           String price = productModel.price;
                           String amount = amountInt.toString();
                           int sumInt = int.parse(price) * amountInt;
-                          String sum = sumInt.toString();
-                          print(
-                              '### Print idSeller = $idSeller | idPRoduct = $idProduct | name = $name');
-                          print('### Price = $price');
-                          print('### Sum = $sum');
-                          SQLiteModel sqLiteModel = SQLiteModel(
-                              idSeller: idSeller,
-                              idProduct: idProduct,
-                              name: name,
-                              price: price,
-                              amount: amount,
-                              sum: sum);
-                          await SQLiteHelper()
-                              .insertValueToSQLite(sqLiteModel)
-                              .then((value) {
-                            amountInt = 1;
+                          if ((curenceIdSeller == idSeller) ||
+                              (curenceIdSeller == null)) {
+                            String sum = sumInt.toString();
+                            print(
+                                '### Print idSeller = $idSeller | idPRoduct = $idProduct | name = $name');
+                            print('### Price = $price');
+                            print('### Sum = $sum');
+                            SQLiteModel sqLiteModel = SQLiteModel(
+                                idSeller: idSeller,
+                                idProduct: idProduct,
+                                name: name,
+                                price: price,
+                                amount: amount,
+                                sum: sum);
+                            await SQLiteHelper()
+                                .insertValueToSQLite(sqLiteModel)
+                                .then((value) {
+                              amountInt = 1;
+                              Navigator.pop(context);
+                              //Navigator.pop(context);
+                            });
+                          } else {
                             Navigator.pop(context);
-                            //Navigator.pop(context);
-                          });
+                            MyDialog().normalDialog(
+                                context,
+                                "ร้านค้าไม่ตรงกับรายการก่อนหน้า",
+                                "กรุณาเลือกสินค้าภายในร้านที่เท่าเลือกก่อนหน้านี้ด้วยค่ะ");
+                          }
                         },
                         child: Text(
                           'Add Cart',
