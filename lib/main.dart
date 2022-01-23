@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/states/add_product.dart';
+import 'package:shoppingmall/states/add_wallet.dart';
 import 'package:shoppingmall/states/authen.dart';
 import 'package:shoppingmall/states/buyer_service.dart';
 import 'package:shoppingmall/states/create_account.dart';
@@ -14,14 +15,16 @@ import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:flutter/services.dart';
 
 final Map<String, WidgetBuilder> map = {
-  '/authen': (BuildContext context) => Authen(),
-  '/createAccount': (BuildContext context) => CreateAccount(),
-  '/buyerService': (BuildContext context) => BuyerService(),
-  '/saleService': (BuildContext context) => SalerService(),
-  '/riderService': (BuildContext context) => RiderService(),
-  '/addProduct': (BuildContext context) => AddProductState(),
-  '/editProfileSaler': (BuildContext context) => EditProfileSaler(),
-  '/showCart': (BuildContext context) => ShowCart(),
+  MyConstant.rountAuthen: (BuildContext context) => Authen(),
+  MyConstant.rountCreateAccount: (BuildContext context) => CreateAccount(),
+  MyConstant.rountBuyerService: (BuildContext context) => BuyerService(),
+  MyConstant.rountSalerService: (BuildContext context) => SalerService(),
+  MyConstant.rountRiderService: (BuildContext context) => RiderService(),
+  MyConstant.rountAddProduct: (BuildContext context) => AddProductState(),
+  MyConstant.rountEditProfileSaler: (BuildContext context) =>
+      EditProfileSaler(),
+  MyConstant.rountShowCart: (BuildContext context) => ShowCart(),
+  MyConstant.rountAddWallet: (BuildContext context) => AddWallet(),
 };
 
 String? initialRount;
