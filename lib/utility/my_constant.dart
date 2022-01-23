@@ -16,6 +16,7 @@ class MyConstant {
   static String rountAddProduct = '/addProduct';
   static String rountEditProfileSaler = '/editProfileSaler';
   static String rountShowCart = '/showCart';
+  static String rountAddWallet = '/addWallet';
 
   //image
   static String image1 = 'images/image1.png';
@@ -26,7 +27,7 @@ class MyConstant {
   static String avatar = 'images/avatar.png';
 
   //Domain
-  static String domain = 'https://d32d-184-82-197-224.ngrok.io';
+  static String domain = 'https://0dbf-49-229-126-31.ngrok.io';
 
 //Color
   static Color primary = Color(0xff9e9d24);
