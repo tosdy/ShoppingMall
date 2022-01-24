@@ -14,7 +14,7 @@ class AddWallet extends StatefulWidget {
 class _AddWalletState extends State<AddWallet> {
   @override
   List<Widget> widgets = [Bank(), Promtpay(), CreditCard()];
-  List<IconData> icons = [Icons.money, Icons.payment, Icons.book];
+  List<IconData> icons = [Icons.money, Icons.book, Icons.payment];
   List<String> titles = ['Bank', 'Promptpay', 'Credit'];
   int indexPosition = 0;
   List<BottomNavigationBarItem> bottomNavigationBarItems = [];

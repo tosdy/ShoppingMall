@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_void_to_null, unused_local_variable
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/states/add_product.dart';
@@ -31,6 +33,8 @@ String? initialRount;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
+
   SharedPreferences preferences = await SharedPreferences.getInstance();
   String? type = preferences.getString('type');
   print('###(main) type ==> $type');
@@ -91,5 +95,14 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

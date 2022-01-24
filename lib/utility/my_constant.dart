@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class MyConstant {
   //Genneral
   static String appName = "Shopping Mall";
+  static String urlPromtpay = 'https://promptpay.io/0888888888.png';
   //Rount
   static String rountAuthen = '/authen';
   static String rountCreateAccount = '/createAccount';
@@ -27,7 +28,7 @@ class MyConstant {
   static String avatar = 'images/avatar.png';
 
   //Domain
-  static String domain = 'https://0dbf-49-229-126-31.ngrok.io';
+  static String domain = 'https://c0fb-184-82-197-224.ngrok.io';
 
 //Color
   static Color primary = Color(0xff9e9d24);
