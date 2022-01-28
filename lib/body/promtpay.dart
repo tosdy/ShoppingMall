@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/utility/my_dialog.dart';
+import 'package:shoppingmall/widgets/nav_confirm_add_waller.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
 
@@ -19,14 +20,18 @@ class _PromtpayState extends State<Promtpay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          buildTitle(),
-          buildCopyPromptPay(),
-          ShowQRcode(),
-          buildDownload(),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            buildTitle(),
+            buildCopyPromptPay(),
+            ShowQRcode(),
+            buildDownload(),
+          ],
+        ),
       ),
+      floatingActionButton: NavConfirmAddWallet(),
     );
   }
 

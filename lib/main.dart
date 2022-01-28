@@ -8,6 +8,7 @@ import 'package:shoppingmall/states/add_product.dart';
 import 'package:shoppingmall/states/add_wallet.dart';
 import 'package:shoppingmall/states/authen.dart';
 import 'package:shoppingmall/states/buyer_service.dart';
+import 'package:shoppingmall/states/confirm_add_wallet.dart';
 import 'package:shoppingmall/states/create_account.dart';
 import 'package:shoppingmall/states/edit_profile_saler.dart';
 import 'package:shoppingmall/states/rider_service.dart';
@@ -15,6 +16,7 @@ import 'package:shoppingmall/states/saler_service.dart';
 import 'package:shoppingmall/states/show_cart.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:flutter/services.dart';
+import 'package:shoppingmall/widgets/nav_confirm_add_waller.dart';
 
 final Map<String, WidgetBuilder> map = {
   MyConstant.rountAuthen: (BuildContext context) => Authen(),
@@ -27,6 +29,8 @@ final Map<String, WidgetBuilder> map = {
       EditProfileSaler(),
   MyConstant.rountShowCart: (BuildContext context) => ShowCart(),
   MyConstant.rountAddWallet: (BuildContext context) => AddWallet(),
+  MyConstant.rountConfirmAddWallet: (BuildContext context) =>
+      ComfirmAddWallet(),
 };
 
 String? initialRount;

@@ -18,6 +18,7 @@ class MyConstant {
   static String rountEditProfileSaler = '/editProfileSaler';
   static String rountShowCart = '/showCart';
   static String rountAddWallet = '/addWallet';
+  static String rountConfirmAddWallet = '/confirmAddWallet';
 
   //image
   static String image1 = 'images/image1.png';
@@ -25,13 +26,15 @@ class MyConstant {
   static String image3 = 'images/image3.png';
   static String image4 = 'images/image4.png';
   static String image5 = 'images/image5.png';
+  static String image6 = 'images/image6.png';
   static String avatar = 'images/avatar.png';
 
   //Domain
-  static String domain = 'https://7bdf-184-82-197-224.ngrok.io';
+  static String domain = 'https://8cb8-184-82-205-0.ngrok.io';
 
   //omise
   static String publicKey = 'pkey_test_5qlrb7anllgfmbc415m';
+  static String secretKey = 'skey_test_5qlrb7anktc8yff1yhy';
 
 //Color
   static Color primary = Color(0xff9e9d24);

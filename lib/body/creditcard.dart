@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:omise_flutter/omise_flutter.dart';
 import 'package:shoppingmall/body/show_order_seller.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
+import 'package:http/http.dart' as http;
 
 class CreditCard extends StatefulWidget {
   const CreditCard({Key? key}) : super(key: key);
@@ -51,15 +55,16 @@ class _CreditCardState extends State<CreditCard> {
                     buildTitle('Amount :'),
                     formAmount(),
                     //Spacer(),
+                    buildButton(),
                   ],
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  buildButton(),
-                ],
-              ),
+              // Column(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     buildButton(),
+              //   ],
+              // ),
             ],
           ),
         ),
@@ -67,20 +72,23 @@ class _CreditCardState extends State<CreditCard> {
     );
   }
 
-  Container buildButton() {
-    return Container(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          if (formKey.currentState!.validate()) {
-            print('###ID Card = $idCard');
-            print('###Expired Month = $expiredDateMonth');
-            print('###Expired Year = $expiredDateYear');
-            print('###cvc = $cvc');
-            getTokenAndChargeOmise();
-          }
-        },
-        child: Text('Add Money'),
+  Widget buildButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
+      child: Container(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            if (formKey.currentState!.validate()) {
+              print('###ID Card = $idCard');
+              print('###Expired Month = $expiredDateMonth');
+              print('###Expired Year = $expiredDateYear');
+              print('###cvc = $cvc');
+              getTokenAndChargeOmise();
+            }
+          },
+          child: Text('Add Money'),
+        ),
       ),
     );
   }
@@ -88,12 +96,42 @@ class _CreditCardState extends State<CreditCard> {
   Future<void> getTokenAndChargeOmise() async {
     String publicKey = MyConstant.publicKey;
     OmiseFlutter omiseFlutter = OmiseFlutter(publicKey);
+
     await omiseFlutter.token
         .create('$name $surname', idCard!, expiredDateMonth!, expiredDateYear!,
             cvc!)
-        .then((value) {
+        .then((value) async {
       String token = value.id.toString();
       print('###token = $token');
+
+      //Charge Credit User
+      String secretKey = MyConstant.secretKey;
+      String urlApi = 'https://api.omise.co/charges';
+      String basicAuth = 'Basic ' + base64Encode(utf8.encode(secretKey + ":"));
+      Map<String, String> headerMap = {};
+      headerMap['authorization'] = basicAuth;
+      headerMap['Cache-Control'] = 'no-cache';
+      headerMap['Content-Type'] = 'application/x-www-form-urlencoded';
+
+      String zero = '00';
+      amount = '$amount$zero';
+
+      Map<String, dynamic> data = {};
+      data['amount'] = amount;
+      data['currency'] = 'thb';
+      data['card'] = token;
+
+      Uri uri = Uri.parse(urlApi);
+      http.Response response =
+          await http.post(uri, headers: headerMap, body: data);
+
+      var resultAPI = json.decode(response.body);
+      //print('### Response = $resultAPI');
+      print('###status = ${resultAPI['status']}');
+    }).catchError((value) {
+      String title = value.code;
+      String message = value.message;
+      MyDialog().normalDialog(context, title, message);
     });
   }
 
@@ -105,6 +143,7 @@ class _CreditCardState extends State<CreditCard> {
           if (value!.isEmpty) {
             return 'Please Fill Amount';
           } else {
+            amount = value.trim();
             return null;
           }
         },
