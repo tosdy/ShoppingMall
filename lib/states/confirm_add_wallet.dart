@@ -1,10 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_if_null_operators
 
 import 'dart:io';
+import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
 
@@ -17,6 +21,8 @@ class ComfirmAddWallet extends StatefulWidget {
 
 class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
   String? dateTimeStr;
+  File? file;
+  var formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -46,17 +52,51 @@ class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
                 ? Icon(Icons.arrow_back_ios)
                 : Icon(Icons.arrow_back)),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          newHeadTitle(),
-          newDateTime(),
-          Spacer(),
-          newImage(),
-          Spacer(),
-          newButton(),
-        ],
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        behavior: HitTestBehavior.opaque,
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              newHeadTitle(),
+              newDateTime(),
+              Spacer(),
+              buildNewMoney(),
+              Spacer(),
+              newImage(),
+              Spacer(),
+              newButton(),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  Row buildNewMoney() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 250,
+          child: TextFormField(
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Please Fill Money';
+              } else {
+                return null;
+              }
+            },
+            decoration: InputDecoration(
+              label: ShowTitle(title: 'Money'),
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -64,10 +104,49 @@ class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
     return Container(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          if (formKey.currentState!.validate()) {
+            if (file == null) {
+              MyDialog().normalDialog(
+                  context, 'Error', 'กรุณาถ่ายภาพ หรือ เลิือกภาพจาก Gallary');
+            } else {
+              processUploadAndInsertData();
+            }
+          }
+        },
         child: Text('Confirm Add Wallet'),
       ),
     );
+  }
+
+  Future<void> processUploadAndInsertData() async {
+    String apiSaveSlip = '${MyConstant.domain}/shoppingmall/saveSlip.php';
+    String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
+
+    MyDialog().showProgressDialog(context);
+    try {
+      Map<String, dynamic> map = {};
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameSlip);
+
+      FormData data = FormData.fromMap(map);
+      await Dio().post(apiSaveSlip, data: data).then((value) {
+        Navigator.pop(context);
+      });
+    } catch (e) {}
+  }
+
+  Future<void> processTakePhoto(ImageSource source) async {
+    try {
+      var result = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+      );
+      setState(() {
+        file = File(result!.path);
+      });
+    } catch (e) {}
   }
 
   Row newImage() {
@@ -75,13 +154,26 @@ class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        IconButton(onPressed: () {}, icon: Icon(Icons.add_a_photo)),
+        IconButton(
+            onPressed: () => processTakePhoto(ImageSource.camera),
+            icon: Icon(
+              Icons.add_a_photo,
+              size: 40,
+            )),
         Container(
-          width: 200,
-          height: 200,
-          child: Showimage(path: MyConstant.image6),
+          width: 300,
+          height: 300,
+          child: file == null
+              ? Showimage(path: MyConstant.image6)
+              : Image.file(file!),
         ),
-        IconButton(onPressed: () {}, icon: Icon(Icons.add_photo_alternate)),
+        IconButton(
+          onPressed: () => processTakePhoto(ImageSource.gallery),
+          icon: Icon(
+            Icons.add_photo_alternate,
+            size: 40,
+          ),
+        ),
       ],
     );
   }
