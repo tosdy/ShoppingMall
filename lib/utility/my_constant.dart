@@ -31,7 +31,7 @@ class MyConstant {
 
   //Domain
   static String domain =
-      'https://0195-2001-fb1-52-a513-146-909b-991c-81ee.ngrok.io';
+      'https://a2c8-2001-fb1-52-c450-243b-7225-e3e3-94e5.ngrok.io';
 
   //omise
   static String publicKey = 'pkey_test_5qlrb7anllgfmbc415m';
@@ -54,6 +54,26 @@ class MyConstant {
     800: Color.fromRGBO(108, 111, 0, 0.9),
     900: Color.fromRGBO(108, 111, 0, 1.0),
   };
+
+  //Background
+  BoxDecoration planBackground() =>
+      BoxDecoration(color: MyConstant.light.withOpacity(0.5));
+
+  BoxDecoration gradientLinearBackground() => BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.white, MyConstant.primary, MyConstant.dark],
+        ),
+      );
+
+  BoxDecoration gradientRadioBackground() => BoxDecoration(
+        gradient: RadialGradient(
+          center: Alignment(-0.5, -0.5),
+          radius: 0.5,
+          colors: [Colors.white, MyConstant.dark],
+        ),
+      );
 
   //Stlyle
   TextStyle h1Style() =>
