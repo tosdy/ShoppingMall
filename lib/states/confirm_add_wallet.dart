@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
 import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
@@ -24,11 +25,20 @@ class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
   File? file;
   var formKey = GlobalKey<FormState>();
 
+  String? idBuyer;
+  TextEditingController moneyControler = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     findCurrnttime();
+    findUser();
+  }
+
+  Future<void> findUser() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    idBuyer = preferences.getString('id');
   }
 
   void findCurrnttime() {
@@ -82,6 +92,7 @@ class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
         Container(
           width: 250,
           child: TextFormField(
+            controller: moneyControler,
             keyboardType: TextInputType.number,
             validator: (value) {
               if (value!.isEmpty) {
@@ -120,6 +131,7 @@ class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
   }
 
   Future<void> processUploadAndInsertData() async {
+    //Uploas Image to server
     String apiSaveSlip = '${MyConstant.domain}/shoppingmall/saveSlip.php';
     String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
 
@@ -130,10 +142,25 @@ class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
           await MultipartFile.fromFile(file!.path, filename: nameSlip);
 
       FormData data = FormData.fromMap(map);
-      await Dio().post(apiSaveSlip, data: data).then((value) {
+      await Dio().post(apiSaveSlip, data: data).then((value) async {
         Navigator.pop(context);
+
+        //Insert Data to database
+        var pathSlip = '/slip/$nameSlip';
+        var status = 'WaitOrder';
+        String apiInsert =
+            '${MyConstant.domain}/shoppingmall/insertWallet.php?isAdd=true&idBuyer=$idBuyer&datePay=$dateTimeStr&money=${moneyControler.text.trim()}&pathSlip=$pathSlip&status=$status';
+        await Dio().get(apiInsert).then((value) {
+          MyDialog(funcAction: () => success()).actionDialog(
+              context, 'Confirm Success', 'Confirm Add Wallet Success ');
+        });
       });
     } catch (e) {}
+  }
+
+  void success(){
+    Navigator.pushNamedAndRemoveUntil(context, MyConstant.rountBuyerService, (route) => false)
+
   }
 
   Future<void> processTakePhoto(ImageSource source) async {
