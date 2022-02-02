@@ -158,9 +158,9 @@ class _ComfirmAddWalletState extends State<ComfirmAddWallet> {
     } catch (e) {}
   }
 
-  void success(){
-    Navigator.pushNamedAndRemoveUntil(context, MyConstant.rountBuyerService, (route) => false)
-
+  void success() {
+    Navigator.pushNamedAndRemoveUntil(
+        context, MyConstant.rountBuyerService, (route) => false);
   }
 
   Future<void> processTakePhoto(ImageSource source) async {

@@ -30,8 +30,7 @@ class MyConstant {
   static String avatar = 'images/avatar.png';
 
   //Domain
-  static String domain =
-      'https://a2c8-2001-fb1-52-c450-243b-7225-e3e3-94e5.ngrok.io';
+  static String domain = 'https://9a42-184-82-205-0.ngrok.io';
 
   //omise
   static String publicKey = 'pkey_test_5qlrb7anllgfmbc415m';

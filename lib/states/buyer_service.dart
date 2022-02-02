@@ -1,11 +1,19 @@
 // ignore_for_file: prefer_const_constructors, unused_import
 
+import 'dart:convert';
+import 'dart:ffi';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/body/my_money_buyer.dart';
 import 'package:shoppingmall/body/my_order_buyer.dart';
 import 'package:shoppingmall/body/show_all_shop_buyer.dart';
+import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/widgets/show_image.dart';
+import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_signout.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
 
@@ -19,6 +27,28 @@ class BuyerService extends StatefulWidget {
 class _BuyerServiceState extends State<BuyerService> {
   List<Widget> Widgets = [ShowAllShopBuyer(), MyMoneyBuyer(), MyOrderBuyer()];
   int indexWidget = 0;
+
+  UserModel? userModel;
+  @override
+  void initState() {
+    super.initState();
+    findUserLogin();
+  }
+
+  Future<void> findUserLogin() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var idUserLogin = preferences.getString('id');
+    String apiUrl =
+        '${MyConstant.domain}/shoppingmall/getUserWhereId.php?isAdd=true&id=$idUserLogin';
+
+    await Dio().get(apiUrl).then((value) {
+      for (var item in json.decode(value.data)) {
+        setState(() {
+          userModel = UserModel.fromMap(item);
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +143,25 @@ class _BuyerServiceState extends State<BuyerService> {
     );
   }
 
-  UserAccountsDrawerHeader buildHeader() =>
-      UserAccountsDrawerHeader(accountName: null, accountEmail: null);
+  UserAccountsDrawerHeader buildHeader() => UserAccountsDrawerHeader(
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          radius: 1,
+          center: Alignment(-0.8, -0.2),
+          colors: [Colors.white, MyConstant.dark],
+        ),
+      ),
+      currentAccountPicture: userModel == null
+          ? Showimage(path: MyConstant.avatar)
+          : userModel!.avatar.isEmpty
+              ? Showimage(path: MyConstant.avatar)
+              : CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(
+                      '${MyConstant.domain}${userModel!.avatar}'),
+                ),
+      accountName: ShowTitle(
+        title: userModel == null ? '' : userModel!.name,
+        textStyle: MyConstant().h2WhiteStyle(),
+      ),
+      accountEmail: null);
 }
