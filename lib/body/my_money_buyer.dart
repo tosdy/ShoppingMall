@@ -1,10 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/body/approve.dart';
 import 'package:shoppingmall/body/wait.dart';
 import 'package:shoppingmall/body/wallet.dart';
+import 'package:shoppingmall/models/wallet_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/widgets/show_process.dart';
 
 class MyMoneyBuyer extends StatefulWidget {
   const MyMoneyBuyer({Key? key}) : super(key: key);
@@ -15,7 +21,7 @@ class MyMoneyBuyer extends StatefulWidget {
 
 class _MyMoneyBuyerState extends State<MyMoneyBuyer> {
   int indexWidget = 0;
-  var widgets = <Widget>[Wallet(), Approve(), Wait()];
+  var widgets = <Widget>[];
 
   var titles = <String>['Wallet', 'Approve', 'Wait'];
   var iconDatas = <IconData>[
@@ -24,12 +30,57 @@ class _MyMoneyBuyerState extends State<MyMoneyBuyer> {
     Icons.hourglass_bottom
   ];
 
+  int approvedWallet = 0;
+  int waitApproved = 0;
+  bool load = true;
+
+  Future<void> readAllWallet() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? idBuyer = preferences.getString('id');
+
+    print('###idBuyer = $idBuyer');
+
+    var apiUrl =
+        '${MyConstant.domain}/shoppingmall/getWalletWhereIdBuyer.php?isAdd=true&idBuyer=$idBuyer';
+
+    await Dio().get(apiUrl).then((value) {
+      for (var item in json.decode(value.data)) {
+        WalletModel model = WalletModel.fromMap(item);
+
+        switch (model.status) {
+          case 'Approve':
+            approvedWallet = approvedWallet + int.parse(model.money);
+            break;
+          case 'WaitOrder':
+            waitApproved = waitApproved + int.parse(model.money);
+            break;
+          default:
+        }
+      }
+
+      print('###approvedWallet = $approvedWallet');
+      print('###waitApproved = $waitApproved');
+
+      widgets.add(Wallet(
+        approvedWallet: approvedWallet,
+        waitApproveWallet: waitApproved,
+      ));
+      widgets.add(Approve());
+      widgets.add(Wait());
+
+      setState(() {
+        load = false;
+      });
+    });
+  }
+
   var bottonNavigationBarItems = <BottomNavigationBarItem>[];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    readAllWallet();
     setUpBottonBar();
   }
 
@@ -51,7 +102,7 @@ class _MyMoneyBuyerState extends State<MyMoneyBuyer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: widgets[indexWidget],
+      body: load ? ShowProgress() : widgets[indexWidget],
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: MyConstant.dark,
         unselectedItemColor: MyConstant.light,
