@@ -12,6 +12,7 @@ import 'package:shoppingmall/body/my_order_buyer.dart';
 import 'package:shoppingmall/body/show_all_shop_buyer.dart';
 import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_signout.dart';
@@ -41,12 +42,28 @@ class _BuyerServiceState extends State<BuyerService> {
     String apiUrl =
         '${MyConstant.domain}/shoppingmall/getUserWhereId.php?isAdd=true&id=$idUserLogin';
 
-    await Dio().get(apiUrl).then((value) {
+    await Dio().get(apiUrl).then((value) async {
       for (var item in json.decode(value.data)) {
         setState(() {
           userModel = UserModel.fromMap(item);
+          print('###Id user login ${userModel!.id}');
         });
       }
+
+      var apiUrl =
+          '${MyConstant.domain}/shoppingmall/getWalletWhereIdBuyer.php?isAdd=true&idBuyer=${userModel!.id}';
+
+      await Dio().get(apiUrl).then((value) {
+        if (value.toString() == 'null') {
+          print('Data Empty');
+          MyDialog(
+            funcAction: () {
+              Navigator.pop(context);
+              return Navigator.pushNamed(context, MyConstant.rountAddWallet);
+            },
+          ).actionDialog(context, 'No Wallet', 'Please Add Wallet');
+        }
+      });
     });
   }
 

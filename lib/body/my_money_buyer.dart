@@ -10,6 +10,7 @@ import 'package:shoppingmall/body/wait.dart';
 import 'package:shoppingmall/body/wallet.dart';
 import 'package:shoppingmall/models/wallet_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/widgets/show_no_data.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
 
 class MyMoneyBuyer extends StatefulWidget {
@@ -33,6 +34,11 @@ class _MyMoneyBuyerState extends State<MyMoneyBuyer> {
   int approvedWallet = 0;
   int waitApproved = 0;
   bool load = true;
+  bool haveData = false;
+
+  List<WalletModel> aproveWalletModels =
+      []; // var aproveWalletModels = <WalletModel>[];
+  List<WalletModel> waitApproveWalletModels = [];
 
   Future<void> readAllWallet() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -44,33 +50,47 @@ class _MyMoneyBuyerState extends State<MyMoneyBuyer> {
         '${MyConstant.domain}/shoppingmall/getWalletWhereIdBuyer.php?isAdd=true&idBuyer=$idBuyer';
 
     await Dio().get(apiUrl).then((value) {
-      for (var item in json.decode(value.data)) {
-        WalletModel model = WalletModel.fromMap(item);
+      if (value.toString() != 'null') {
+        for (var item in json.decode(value.data)) {
+          WalletModel model = WalletModel.fromMap(item);
 
-        switch (model.status) {
-          case 'Approve':
-            approvedWallet = approvedWallet + int.parse(model.money);
-            break;
-          case 'WaitOrder':
-            waitApproved = waitApproved + int.parse(model.money);
-            break;
-          default:
+          switch (model.status) {
+            case 'Approve':
+              approvedWallet = approvedWallet + int.parse(model.money);
+              aproveWalletModels.add(model);
+              break;
+            case 'WaitOrder':
+              waitApproved = waitApproved + int.parse(model.money);
+              waitApproveWalletModels.add(model);
+              break;
+            default:
+          }
         }
+
+        print('###approvedWallet = $approvedWallet');
+        print('###waitApproved = $waitApproved');
+
+        widgets.add(Wallet(
+          approvedWallet: approvedWallet,
+          waitApproveWallet: waitApproved,
+        ));
+        widgets.add(Approve(
+          walletModels: aproveWalletModels,
+        ));
+        widgets.add(Wait(
+          walletModels: waitApproveWalletModels,
+        ));
+
+        setState(() {
+          haveData = true;
+          load = false;
+        });
+      } else {
+        setState(() {
+          haveData = false;
+          load = false;
+        });
       }
-
-      print('###approvedWallet = $approvedWallet');
-      print('###waitApproved = $waitApproved');
-
-      widgets.add(Wallet(
-        approvedWallet: approvedWallet,
-        waitApproveWallet: waitApproved,
-      ));
-      widgets.add(Approve());
-      widgets.add(Wait());
-
-      setState(() {
-        load = false;
-      });
     });
   }
 
@@ -102,7 +122,11 @@ class _MyMoneyBuyerState extends State<MyMoneyBuyer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: load ? ShowProgress() : widgets[indexWidget],
+      body: load
+          ? ShowProgress()
+          : haveData
+              ? widgets[indexWidget]
+              : ShowNoData(title: 'No Data', pathImage: MyConstant.image4),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: MyConstant.dark,
         unselectedItemColor: MyConstant.light,

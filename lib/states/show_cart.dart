@@ -4,11 +4,14 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmall/models/sqlite_model.dart';
 import 'package:shoppingmall/models/user_model.dart';
 import 'package:shoppingmall/utility/my_constant.dart';
+import 'package:shoppingmall/utility/my_dialog.dart';
 import 'package:shoppingmall/utility/sqlite_helper.dart';
 import 'package:shoppingmall/widgets/show_image.dart';
+import 'package:shoppingmall/widgets/show_no_data.dart';
 import 'package:shoppingmall/widgets/show_process.dart';
 import 'package:shoppingmall/widgets/show_title.dart';
 
@@ -80,19 +83,9 @@ class _ShowCartState extends State<ShowCart> {
       body: load
           ? ShowProgress()
           : sqliteModels.isEmpty
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 16),
-                      width: 200,
-                      child: Showimage(path: MyConstant.image2),
-                    ),
-                    Center(
-                        child: ShowTitle(
-                            title: "Empty Cart",
-                            textStyle: MyConstant().h1Style())),
-                  ],
+              ? ShowNoData(
+                  title: 'Empty Cart',
+                  pathImage: MyConstant.image3,
                 )
               : buildContent(),
     );
@@ -118,8 +111,30 @@ class _ShowCartState extends State<ShowCart> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, MyConstant.rountAddWallet);
+            onPressed: () async {
+              //Navigator.pushNamed(context, MyConstant.rountAddWallet);
+
+              SharedPreferences preferences =
+                  await SharedPreferences.getInstance();
+              String idBuyer = preferences.getString('id')!;
+
+              MyDialog().showProgressDialog(context);
+              var apiUrl =
+                  '${MyConstant.domain}/shoppingmall/getWalletWhereIdBuyer.php?isAdd=true&idBuyer=${idBuyer}';
+
+              await Dio().get(apiUrl).then((value) {
+                Navigator.pop(context);
+                if (value.toString() == 'null') {
+                  print('Data Empty');
+                  MyDialog(
+                    funcAction: () {
+                      Navigator.pop(context);
+                      return Navigator.pushNamed(
+                          context, MyConstant.rountAddWallet);
+                    },
+                  ).actionDialog(context, 'No Wallet', 'Please Add Wallet');
+                }
+              });
             },
             child: Text('order')),
         Container(
